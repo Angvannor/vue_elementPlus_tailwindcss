@@ -130,15 +130,12 @@ watch(isDarkMode, (newVal) => {
 
 @keyframes slide-bg {
   0% {
-    /* 从右上方开始 */
     transform: rotate(-15deg) translateX(-33%);
   }
   50% {
-    /* 缓慢移动到左下方 */
     transform: rotate(-15deg) translateX(-67%);
   }
   100% {
-    /* 回到起点 */
     transform: rotate(-15deg) translateX(-33%);
   }
 }

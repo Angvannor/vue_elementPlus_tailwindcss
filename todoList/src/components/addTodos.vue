@@ -1,5 +1,5 @@
 <template>
-  <div class="shadow-lg mr-5 w-1/3 h-full rounded-xl p-5">
+  <div class="shadow-lg h-full rounded-xl p-5">
     <h1 class="mb-5">Add Todo</h1>
     <el-form :model="form" label-width="auto" style="max-width: 600px">
       <el-form-item label="事件名称">
@@ -12,13 +12,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="事件内容">
-        <el-input
-          v-model="form.desc"
-          type="textarea"
-          maxlength="200"
-          :rows="10"
-          input-style="resize: none;"
-        />
+        <el-input v-model="form.desc" type="textarea" maxlength="200" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit" class="m-auto">创建</el-button>
@@ -30,7 +24,6 @@
 <script setup>
 import { reactive } from "vue";
 
-// do not use same name with ref
 const form = reactive({
   name: "",
   resource: "",
@@ -46,6 +39,11 @@ const onSubmit = () => {
 <style scoped>
 .el-form :deep(.el-form-item__label) {
   color: inherit;
+}
+
+.el-form :deep(.el-textarea__inner) {
+  height: 250px !important;
+  resize: none !important;
 }
 
 :is(.dark) .el-form :deep(.el-input__wrapper),
