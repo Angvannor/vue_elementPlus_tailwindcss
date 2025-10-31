@@ -9,18 +9,29 @@ const isDarkMode = ref(false);
 
 onMounted(() => {
   const saved = localStorage.getItem(STORAGE_KEY);
+  let isDark = false;
   if (saved !== null) {
-    isDarkMode.value = saved === "true";
+    isDark = saved === "true";
   } else {
     const h = new Date().getHours();
-    isDarkMode.value = h < 6 || h > 18;
+    isDark = h < 6 || h > 18;
+  }
+  isDarkMode.value = isDark;
+
+  if (isDark) {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
   }
 });
 
-// 唯一的修改点在这里
 watch(isDarkMode, (newVal) => {
-  // 移除了 .value，因为 STORAGE_KEY 是一个字符串
   localStorage.setItem(STORAGE_KEY, newVal ? "true" : "false");
+  if (newVal) {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
 });
 </script>
 
@@ -40,7 +51,11 @@ watch(isDarkMode, (newVal) => {
       text
       bg
       class="p-5! m-5! relative right-5 top-5 text-xl! font-bold!"
-      :class="isDarkMode ? 'bg-violet-400! text-white!' : 'bg-blue-100!'"
+      :class="
+        isDarkMode
+          ? 'bg-violet-400! text-white! hover:bg-violet-300!'
+          : 'bg-blue-100! hover:bg-blue-50! text-black!'
+      "
       @click="isDarkMode = !isDarkMode"
       >{{ isDarkMode ? "切换到日间模式 ☀️" : "切换到夜间模式 🌙" }}
     </el-button>
