@@ -64,9 +64,13 @@ const data = ref([
   background-color: var(--el-table-bg-color) !important;
 }
 
+:is(.dark) .el-table :deep(.el-table__header-wrapper) th {
+  background-color: #374151 !important;
+  color: var(--el-table-header-text-color) !important;
+}
+
 :is(.dark) .el-table :deep(.el-table__header-wrapper) {
   background-color: #374151;
-  border-right: 1px solid #6b7280;
   color: var(--el-table-header-text-color);
 }
 </style>
