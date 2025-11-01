@@ -23,6 +23,8 @@
 
 <script setup>
 import { reactive } from "vue";
+//Pinia Store
+import { useTodoStore } from "@/stores/todoStore";
 
 const form = reactive({
   name: "",
@@ -30,8 +32,16 @@ const form = reactive({
   desc: "",
 });
 
+const todoStore = useTodoStore();
+
 const onSubmit = () => {
-  console.log("submit!");
+  todoStore.addTodo(form);
+
+  form.name = "";
+  form.resource = "";
+  form.desc = "";
+
+  console.log("Todo added!");
 };
 </script>
 

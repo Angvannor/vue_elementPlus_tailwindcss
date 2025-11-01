@@ -1,5 +1,11 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
+import { storeToRefs } from "pinia";
+import { useTodoStore } from "./stores/todoStore";
+
+const todoStore = useTodoStore();
+const { currentFilter } = storeToRefs(todoStore);
+const { setFilter } = todoStore;
 
 import addTodos from "./components/addTodos.vue";
 import todoList from "./components/todoList.vue";
@@ -71,16 +77,34 @@ watch(isDarkMode, (newVal) => {
       >
         <todoList :class="isDarkMode ? 'bg-zinc-600 ' : 'bg-white'" />
         <div class="flex justify-center gap-2">
-          <el-button type="success" class="w-full m-3 h-10 font-bold!" :plain="isDarkMode"
-            >已完成</el-button
+          <el-button
+            type="success"
+            class="w-full m-3 h-10 font-bold!"
+            :plain="isDarkMode"
+            @click="setFilter('completed')"
           >
-          <el-button type="danger" class="w-full m-3 h-10 font-bold!" :plain="isDarkMode"
-            >未完成</el-button
+            已完成
+          </el-button>
+          <el-button
+            type="danger"
+            class="w-full m-3 h-10 font-bold!"
+            :plain="isDarkMode"
+            @click="setFilter('uncompleted')"
           >
-          <el-button type="primary" class="w-full m-3 h-10 font-bold!" :plain="isDarkMode"
-            >💻技能</el-button
+            未完成
+          </el-button>
+          <el-button
+            type="primary"
+            class="w-full m-3 h-10 font-bold!"
+            :plain="isDarkMode"
+            @click="setFilter('事业')"
+            >💻事业</el-button
           >
-          <el-button type="warning" class="w-full m-3 h-10 font-bold!" :plain="isDarkMode"
+          <el-button
+            type="warning"
+            class="w-full m-3 h-10 font-bold!"
+            :plain="isDarkMode"
+            @click="setFilter('兴趣')"
             >🎨兴趣</el-button
           >
         </div>
