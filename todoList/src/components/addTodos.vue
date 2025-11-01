@@ -27,7 +27,6 @@ import { reactive } from "vue";
 const form = reactive({
   name: "",
   resource: "",
-  date: "",
   desc: "",
 });
 
@@ -42,7 +41,7 @@ const onSubmit = () => {
 }
 
 .el-form :deep(.el-textarea__inner) {
-  height: 250px !important;
+  height: 20vh !important;
   resize: none !important;
 }
 

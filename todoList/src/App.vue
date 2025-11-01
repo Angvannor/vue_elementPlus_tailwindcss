@@ -64,23 +64,23 @@ watch(isDarkMode, (newVal) => {
       class="text-center shadow-xl p-10 rounded-xl w-1/2 h-1/2 mx-auto flex justify-between"
       :class="isDarkMode ? 'bg-zinc-800 ' : 'bg-blue-100'"
     >
-      <addTodos :class="isDarkMode ? 'bg-zinc-700 ' : 'bg-blue-50'" />
+      <addTodos :class="isDarkMode ? 'bg-zinc-700 ' : 'bg-blue-50'" class="w-1/3" />
       <div
         class="shadow-lg ml-5 w-2/3 h-full rounded-xl p-5"
         :class="isDarkMode ? 'bg-zinc-700 ' : 'bg-blue-50'"
       >
         <todoList :class="isDarkMode ? 'bg-zinc-600 ' : 'bg-white'" />
-        <div class="p-2">
-          <el-button type="success" class="w-1/5 m-3 h-10 font-bold!" :plain="isDarkMode"
+        <div class="flex justify-center gap-2">
+          <el-button type="success" class="w-full m-3 h-10 font-bold!" :plain="isDarkMode"
             >已完成</el-button
           >
-          <el-button type="danger" class="w-1/5 m-3 h-10 font-bold!" :plain="isDarkMode"
+          <el-button type="danger" class="w-full m-3 h-10 font-bold!" :plain="isDarkMode"
             >未完成</el-button
           >
-          <el-button type="primary" class="w-1/5 m-3 h-10 font-bold!" :plain="isDarkMode"
+          <el-button type="primary" class="w-full m-3 h-10 font-bold!" :plain="isDarkMode"
             >💻技能</el-button
           >
-          <el-button type="warning" class="w-1/5 m-3 h-10 font-bold!" :plain="isDarkMode"
+          <el-button type="warning" class="w-full m-3 h-10 font-bold!" :plain="isDarkMode"
             >🎨兴趣</el-button
           >
         </div>
