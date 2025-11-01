@@ -50,6 +50,11 @@ const onSubmit = () => {
   color: inherit;
 }
 
+:is(.dark) .el-form :deep(.el-input__inner),
+:is(.dark) .el-form :deep(.el-textarea__inner) {
+  color: white;
+}
+
 .el-form :deep(.el-textarea__inner) {
   height: 20vh !important;
   resize: none !important;
