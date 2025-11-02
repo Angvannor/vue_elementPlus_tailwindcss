@@ -1,5 +1,6 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
+import { ElMessage } from "element-plus";
 
 export const useTodoStore = defineStore("todo", {
   state: () => ({
@@ -33,13 +34,22 @@ export const useTodoStore = defineStore("todo", {
   },
   actions: {
     addTodo(newTodo) {
-      this.todos.push({
-        id: Date.now(),
-        name: newTodo.name,
-        resource: newTodo.resource,
-        desc: newTodo.desc,
-        isCompleted: false,
-      });
+      if (
+        newTodo.name.trim() === "" ||
+        newTodo.resource.trim() === "" ||
+        newTodo.desc.trim() === ""
+      ) {
+        ElMessage.warning("添加内容不能为空！");
+        return;
+      } else {
+        this.todos.push({
+          id: Date.now(),
+          name: newTodo.name,
+          resource: newTodo.resource,
+          desc: newTodo.desc,
+          isCompleted: false,
+        });
+      }
     },
     toggleCompletion(todoId) {
       const todo = this.todos.find((t) => t.id === todoId);

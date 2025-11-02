@@ -24,6 +24,7 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-button type="default" @click="setFilter('all')" class="mt-3 p-2">取消筛选</el-button>
   </div>
 </template>
 
@@ -34,7 +35,7 @@ import { useTodoStore } from "@/stores/todoStore";
 const todoStore = useTodoStore();
 
 const { filteredTodos, todos } = storeToRefs(todoStore);
-const { toggleCompletion, deleteTodo, currentFilter } = todoStore;
+const { toggleCompletion, deleteTodo, currentFilter, setFilter } = todoStore;
 
 const tableRowClassName = ({ row, rowIndex }) => {
   if (row.isCompleted) {
