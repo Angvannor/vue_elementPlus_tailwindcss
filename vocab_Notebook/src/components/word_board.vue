@@ -7,7 +7,9 @@
       <el-table-column label="Trans" prop="interpretation" width="100"></el-table-column>
       <el-table-column label="Example" prop="example" max-width="400"></el-table-column>
       <el-table-column label="Operate" prop="Operation" width="90">
-        <el-button type="danger" @click="deleteVocab(scope.row.id)">删除</el-button>
+        <template #default="scope">
+          <el-button type="danger" @click="deleteVocab(scope.row.id)">删除</el-button>
+        </template>
       </el-table-column>
     </el-table>
   </div>

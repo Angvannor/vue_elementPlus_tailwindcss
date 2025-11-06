@@ -2,33 +2,41 @@ import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import { ElMessage } from "element-plus";
 
+const defaultVocabs = [
+  {
+    id: 1,
+    name: "pray",
+    nature: "v",
+    interpretation: "祈祷",
+    example: "Now all we have to is to help ourselves and pray to God",
+  },
+  {
+    id: 2,
+    name: "develop",
+    nature: "v",
+    interpretation: "使...发达",
+    example: "She won a grant to develop her own business",
+  },
+  {
+    id: 3,
+    name: "inform",
+    nature: "v",
+    interpretation: "通知",
+    example: "I informed them about the party",
+  },
+];
+
+const STORAGE_KEY = "my-vocab-app-data";
+
 export const useVocabStore = defineStore("todo", {
-  state: () => ({
-    vocabs: [
-      {
-        id: 1,
-        name: "pray",
-        nature: "v",
-        interpretation: "祈祷",
-        example: "Now all we have to is to help ourselves and pray to God",
-      },
-      {
-        id: 2,
-        name: "develop",
-        nature: "v",
-        interpretation: "使...发达",
-        example: "She won a grant to develop her own business",
-      },
-      {
-        id: 3,
-        name: "inform",
-        nature: "v",
-        interpretation: "通知",
-        example: "I informed them about the party",
-      },
-    ],
-  }),
-  action: {
+  state: () => {
+    const storedVocabs = localStorage.getItem(STORAGE_KEY);
+
+    return {
+      vocabs: storedVocabs ? JSON.parse(storedVocabs) : defaultVocabs,
+    };
+  },
+  actions: {
     addVocab(newVocab) {
       if (
         newVocab.name.trim() === "" ||
@@ -36,8 +44,7 @@ export const useVocabStore = defineStore("todo", {
         newVocab.interpretation.trim() === "" ||
         newVocab.example.trim() === ""
       ) {
-        ElMessage.warning("添加内容不能为空");
-        return;
+        return false;
       } else {
         this.vocabs.push({
           id: Date.now(),
@@ -46,6 +53,7 @@ export const useVocabStore = defineStore("todo", {
           interpretation: newVocab.interpretation,
           example: newVocab.example,
         });
+        return true;
       }
     },
     deleteVocab(vocabId) {

@@ -37,13 +37,20 @@ const add_word = reactive({
 });
 
 const add_this_word = () => {
-  vocabStore.addVocab(add_word);
+  const success = vocabStore.addVocab(add_word);
 
-  add_word.name = "";
-  add_word.nature = "";
-  add_word.interpretation = "";
-  add_word.example = "";
-
-  ElMessage({ message: "单词添加成功", type: "success" });
+  if (success) {
+    ElMessage({ message: "单词添加成功", type: "success" });
+    add_word.name = "";
+    add_word.nature = "";
+    add_word.interpretation = "";
+    add_word.example = "";
+  } else {
+    ElMessage.warning("添加内容不能为空");
+    add_word.name = "";
+    add_word.nature = "";
+    add_word.interpretation = "";
+    add_word.example = "";
+  }
 };
 </script>

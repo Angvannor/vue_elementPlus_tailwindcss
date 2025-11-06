@@ -22,4 +22,13 @@
 import main_board from "./components/main_board.vue";
 import word_board from "./components/word_board.vue";
 import add_board from "./components/add_board.vue";
+import { useVocabStore } from "@/stores/vocabStore";
+
+const STORAGE_KEY = "my-vocab-app-data";
+
+const vocabStore = useVocabStore();
+
+vocabStore.$subscribe((mutation, state) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.vocabs));
+});
 </script>
