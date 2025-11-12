@@ -1,27 +1,142 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onUnmounted } from "vue";
 import { Timer } from "@element-plus/icons-vue";
+import { ElMessage } from "element-plus";
 
 const value = ref();
-const name = ref("");
 
-const getTime = () => {
-  // 修复：这里应该打印 value.value
-  console.log("Time selected:", value.value);
+const taskName = ref("");
+const startTime = ref(null);
+const endTime = ref(null);
+
+const duringTime = ref("00:00:00");
+const isRunning = ref(false);
+const durationInSeconds = ref(0);
+let timeId = null;
+
+onUnmounted(() => {
+  if (timeId) {
+    clearInterval(timeId);
+  }
+});
+
+const formatTime = (totalSeconds) => {
+  if (totalSeconds < 0) return "00:00:00";
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const pad = (num) => String(num).padStart(2, "0");
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 };
 
-// 新增：添加一个空的 addTask 函数，防止点击按钮时报错
+const timeToSeconds = (timeStr) => {
+  if (!timeStr) return 0;
+
+  const parts = timeStr.split(":");
+
+  const hours = parseInt(parts[0]) || 0;
+  const minutes = parseInt(parts[1]) || 0;
+  const seconds = parseInt(parts[2]) || 0;
+
+  return hours * 3600 + minutes * 60 + seconds;
+};
+
+const secondsToTimeStr = (totalSeconds) => {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return [hours, minutes, seconds].map((n) => String(n).padStart(2, "0")).join(":");
+};
+
+const computeEndTimeFromNow = (secondsAhead) => {
+  const now = new Date();
+  now.setSeconds(now.getSeconds() + secondsAhead);
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
+  return `${hh}:${mm}:${ss}`;
+};
+
+const startTimer = () => {
+  if (timeId) clearInterval(timeId);
+
+  const tick = () => {
+    if (typeof durationInSeconds.value !== "number") return;
+    duringTime.value = formatTime(durationInSeconds.value);
+
+    if (durationInSeconds.value <= 0) {
+      if (timeId) {
+        clearInterval(timeId);
+        timeId = null;
+      }
+      isRunning.value = false;
+      taskName.value = "";
+      duringTime.value = "00:00:00";
+      ElMessage.success("倒计时结束");
+      return true;
+    }
+    return false;
+  };
+
+  tick();
+
+  timeId = setInterval(() => {
+    durationInSeconds.value--;
+
+    duringTime.value = formatTime(durationInSeconds.value);
+
+    tick();
+  }, 1000);
+
+  isRunning.value = true;
+};
+
+const stopTimer = () => {
+  if (isRunning.value) {
+    if (timeId) {
+      clearInterval(timeId);
+      timeId = null;
+    }
+    isRunning.value = false;
+
+    endTime.value = computeEndTimeFromNow(durationInSeconds.value);
+
+    ElMessage.info("已暂停，预计完成时间已更新");
+  } else {
+    startTimer();
+    endTime.value = computeEndTimeFromNow(durationInSeconds.value);
+    ElMessage.success("继续倒计时");
+  }
+};
+
 const addTask = () => {
-  console.log("Task added:", name.value);
+  if (!startTime.value || !endTime.value) {
+    ElMessage.warning("请设置任务的开始时间和预计完成时间！");
+    return;
+  }
+
+  const startTotalSeconds = timeToSeconds(startTime.value);
+  const endTotalSeconds = timeToSeconds(endTime.value);
+
+  const totalDuration = endTotalSeconds - startTotalSeconds;
+
+  if (totalDuration <= 0) {
+    ElMessage.warning("预计完成时间必须晚于开始时间！");
+    return;
+  }
+
+  durationInSeconds.value = totalDuration;
+  isRunning.value = true;
+
+  startTimer();
 };
 </script>
 
 <template>
-  <div class="h-screen flex relative overflow-hidden" id="star-scene">
-    <div class="stars" id="stars-small"></div>
-    <div class="stars" id="stars-medium"></div>
-    <div class="stars" id="stars-large"></div>
-
+  <div class="h-screen flex relative overflow-hidden bg-[#024]">
     <div class="w-1/4 h-2/3 m-auto shadow-lg rounded-2xl bg-white relative z-10">
       <h1 class="text-3xl text-center font-bold m-5">
         <el-icon><Timer /></el-icon>Pomodoro
@@ -29,76 +144,67 @@ const addTask = () => {
       <div class="w-[90%] m-auto">
         <el-divider direction="horizontal" content-position="center"></el-divider>
       </div>
-      <div class="w-4/5 h-1/2 m-auto p-2 shadow-lg rounded-2xl"></div>
+      <div class="w-4/5 h-1/2 m-auto p-2 shadow-lg rounded-2xl bg-gray-50">
+        <div class="w-4/5 h-1/5 p-5 m-auto">
+          <h1 class="text-center font-bold text-2xl">{{ taskName || "无备注" }}</h1>
+        </div>
+        <div class="w-4/5 h-2/5 p-10">
+          <h1 class="text-center font-bold text-9xl">{{ duringTime }}</h1>
+        </div>
+        <div class="w-1/2 h-1/4 m-auto">
+          <el-button
+            type="primary"
+            @click="stopTimer"
+            class="w-full! h-1/2! text-3xl! font-bold! rounded-2xl!"
+            >{{ isRunning ? "暂停" : "继续" }}</el-button
+          >
+        </div>
+        <div
+          class="w-[90%] h-1/10 inset-shadow-sm inset-shadow-gray-300 rounded-2xl m-auto bg-gray-100 p-4"
+        >
+          <h1 class="text-center font-bold m-auto">预计在{{ endTime }}完成</h1>
+        </div>
+      </div>
+
       <div class="w-[90%] m-auto">
         <el-divider direction="horizontal" content-position="center"></el-divider>
       </div>
-      <div class="w-4/5 h-1/3 m-auto p-2 shadow-lg rounded-2xl">
+
+      <div class="w-4/5 h-1/3 m-auto p-5 shadow-lg rounded-2xl bg-gray-50">
         <div class="w-[90%] m-auto">
           <h1 class="text-left text-xl font-bold">Task Add</h1>
           <el-divider direction="horizontal" content-position="center"></el-divider>
         </div>
-        <div class="w-4/5 m-auto">
-          <el-input placeholder="add a task" v-model="name"></el-input>
-          <el-time-picker
-            v-model="value"
-            value-format="HH:mm:ss"
-            placeholder="预计任务时长"
-            clearable
-            @change="getTime"
-            class="w-full! mt-2"
-          ></el-time-picker>
-          <div class="flex mt-2">
-            <el-button type="primary" @click="addTask" class="m-auto">开始倒计时</el-button>
+        <div class="w-4/5 h-4/5 m-auto">
+          <el-input placeholder="添加任务名称" v-model="taskName"></el-input>
+          <div class="mb-10">
+            <el-time-picker
+              v-model="startTime"
+              value-format="HH:mm:ss"
+              placeholder="任务开始时间"
+              clearable
+              class="mt-2 mr-9.5"
+            ></el-time-picker>
+            <el-time-picker
+              v-model="endTime"
+              value-format="HH:mm:ss"
+              placeholder="预计完成时间"
+              clearable
+              class="mt-2"
+            ></el-time-picker>
           </div>
-          <h1 class="text-center mt-2">预计在...完成</h1>
+          <div class="mt-5 w-1/2 h-1/4 m-auto">
+            <el-button
+              type="primary"
+              @click="addTask"
+              class="m-auto w-full! h-full! font-bold! text-3xl! rounded-2xl!"
+              >开始倒计时</el-button
+            >
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-#star-scene {
-  background-color: #024;
-}
-
-.stars {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  background: transparent;
-  border-radius: 50%;
-}
-
-#stars-small {
-  width: 1px;
-  height: 1px;
-  margin-top: -1000px;
-  margin-left: -1000px;
-  box-shadow: 1543px 1475px #fff, 1332px 1404px #fff, 1923px 1749px #fff, 936px 746px #fff,
-    1191px 1708px #fff, 350px 188px #fff, 198px 1609px #fff, 1695px 1018px #fff, 44px 176px #fff,
-    715px 1239px #fff, 1686px 1582px #fff, 1078px 1563px #fff, 1009px 406px #fff, 856px 635px #fff,
-    1249px 1236px #fff, 1530px 602px #fff, 1343px 1338px #fff, 835px 1050px #fff, 810px 1793px #fff,
-    110px 1642px #fff;
-}
-
-#stars-medium {
-  width: 2px;
-  height: 2px;
-  margin-top: -1000px;
-  margin-left: -1000px;
-  box-shadow: 1726px 1709px #fff, 1656px 76px #fff, 170px 1078px #fff, 1500px 348px #fff,
-    141px 1318px #fff, 1640px 181px #fff, 1346px 1190px #fff, 1553px 433px #fff, 160px 1303px #fff,
-    1658px 112px #fff, 1905px 404px #fff, 638px 109px #fff;
-}
-
-#stars-large {
-  width: 3px;
-  height: 3px;
-  margin-top: -1000px;
-  margin-left: -1000px;
-  box-shadow: 1221px 1137px #fff, 553px 148px #fff, 1668px 1056px #fff, 1929px 1730px #fff,
-    1100px 105px #fff, 1011px 47px #fff, 1237px 1104px #fff, 906px 451px #fff, 1069px 74px #fff;
-}
-</style>
+<style scoped></style>
