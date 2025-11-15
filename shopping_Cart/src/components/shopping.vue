@@ -6,7 +6,7 @@
           v-for="(item, index) in mergedItems"
           :key="index"
           class="w-[290px] bg-gray-200 p-2 rounded-b-lg mx-4 my-2"
-          @click="addGood"
+          @click="addGood(index)"
         >
           <div class="w-full aspect-square overflow-hidden mb-2">
             <img :src="item.image" alt="无法显示图片" class="w-full h-full object-cover" />
@@ -21,13 +21,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue"; // 导入 computed
+import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useShoppingStore } from "@/stores/counter";
 
 const ShoppingStore = useShoppingStore();
 
-const { items } = storeToRefs(ShoppingStore);
+const { items, addGood } = storeToRefs(ShoppingStore);
 
 const imagePaths = ref([
   "/images/bag.jpg",

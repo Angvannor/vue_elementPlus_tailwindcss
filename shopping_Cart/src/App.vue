@@ -1,6 +1,11 @@
 <script setup>
 import shopping from "./components/shopping.vue";
 import Cart from "./components/Cart.vue";
+import { ElMessage } from "element-plus";
+
+const pay = () => {
+  ElMessage.success("支付成功！");
+};
 </script>
 
 <template>
