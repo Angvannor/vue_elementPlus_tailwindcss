@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 
 export const useShoppingStore = defineStore("shopping", () => {
@@ -60,20 +60,43 @@ export const useShoppingStore = defineStore("shopping", () => {
   const chosenItems = ref([]);
 
   const addGood = (index) => {
-    if (chosenItems.value[index]) {
-      chosenItems.value.push(items.value[index]);
+    const itemToAdd = items.value[index];
+
+    const existingIndex = chosenItems.value.findIndex((item) => item.name === itemToAdd.name);
+
+    if (existingIndex > -1) {
+      chosenItems.value[existingIndex].amount++;
     } else {
-      chosenItems.value[index].amount++;
+      chosenItems.value.push({
+        ...itemToAdd,
+        amount: 1,
+      });
     }
   };
 
-  const computeTotalPrice = () => {
-    let totalPrice = 0;
-    for (let i = 0; i < chosenItems.value.length; i++) {
-      totalPrice += chosenItems[i].value.amount * chosenItems[i].value.price;
+  const computeTotalPrice = computed(() => {
+    return chosenItems.value.reduce((total, item) => {
+      return total + item.price * item.amount;
+    }, 0);
+  });
+
+  const increaseAmount = (name) => {
+    const existingIndex = chosenItems.value.findIndex((item) => item.name === name);
+    if (existingIndex > -1) {
+      chosenItems.value[existingIndex].amount++;
     }
-    return totalPrice;
   };
 
-  return { items, chosenItems, addGood, computeTotalPrice };
+  const decreaseAmount = (name) => {
+    const existingIndex = chosenItems.value.findIndex((item) => item.name === name);
+    if (existingIndex > -1) {
+      chosenItems.value[existingIndex].amount--;
+
+      if (chosenItems.value[existingIndex].amount === 0) {
+        chosenItems.value.splice(existingIndex, 1);
+      }
+    }
+  };
+
+  return { items, chosenItems, addGood, computeTotalPrice, increaseAmount, decreaseAmount };
 });

@@ -5,6 +5,7 @@ import { ElMessage } from "element-plus";
 
 const pay = () => {
   ElMessage.success("支付成功！");
+  ShoppingStore.chosenItems = [];
 };
 
 import { useShoppingStore } from "./stores/counter";
@@ -12,8 +13,6 @@ import { storeToRefs } from "pinia";
 const ShoppingStore = useShoppingStore();
 
 const { computeTotalPrice } = storeToRefs(ShoppingStore);
-
-const totalPrice = computeTotalPrice;
 </script>
 
 <template>
@@ -39,7 +38,7 @@ const totalPrice = computeTotalPrice;
           <Cart />
         </div>
         <div class="h-[50px] w-[95%] m-auto bg-white justify-between flex rounded-2xl">
-          <h1 class="leading-12 font-bold text-2xl">合计：共{{ totalPrice || 0 }}元</h1>
+          <h1 class="leading-12 font-bold text-2xl">合计：共{{ computeTotalPrice || 0 }}元</h1>
           <div class="w-1/5 h-full">
             <el-button type="primary" @click="pay" class="w-full! h-full! rounded-r-2xl!"
               >结算</el-button
