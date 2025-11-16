@@ -5,7 +5,7 @@
         <div
           v-for="(item, index) in mergedItems"
           :key="index"
-          class="w-[290px] bg-gray-200 p-2 rounded-b-lg mx-4 my-2"
+          class="w-[290px] bg-gray-200 p-2 rounded-b-lg mx-4 my-2 hover:p-1 ease-linear"
           @click="addGood(index)"
         >
           <div class="w-full aspect-square overflow-hidden mb-2">
@@ -27,7 +27,8 @@ import { useShoppingStore } from "@/stores/counter";
 
 const ShoppingStore = useShoppingStore();
 
-const { items, addGood } = storeToRefs(ShoppingStore);
+const { items } = storeToRefs(ShoppingStore);
+const { addGood } = ShoppingStore;
 
 const imagePaths = ref([
   "/images/bag.jpg",

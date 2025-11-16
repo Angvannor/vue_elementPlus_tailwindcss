@@ -57,25 +57,23 @@ export const useShoppingStore = defineStore("shopping", () => {
     },
   ]);
 
-  const chosenItems = ref([
-    {
-      name: "",
-      price: "",
-      amount: "",
-    },
-  ]);
+  const chosenItems = ref([]);
 
   const addGood = (index) => {
-    chosenItems.value.push(items.value[index]);
+    if (chosenItems.value[index]) {
+      chosenItems.value.push(items.value[index]);
+    } else {
+      chosenItems.value[index].amount++;
+    }
   };
 
   const computeTotalPrice = () => {
     let totalPrice = 0;
-    for (let i = 0; i++; i < chosenItems.value.length) {
+    for (let i = 0; i < chosenItems.value.length; i++) {
       totalPrice += chosenItems[i].value.amount * chosenItems[i].value.price;
     }
     return totalPrice;
   };
 
-  return { items, chosenItems, addGood };
+  return { items, chosenItems, addGood, computeTotalPrice };
 });

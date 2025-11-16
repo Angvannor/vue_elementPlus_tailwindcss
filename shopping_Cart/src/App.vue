@@ -6,6 +6,14 @@ import { ElMessage } from "element-plus";
 const pay = () => {
   ElMessage.success("支付成功！");
 };
+
+import { useShoppingStore } from "./stores/counter";
+import { storeToRefs } from "pinia";
+const ShoppingStore = useShoppingStore();
+
+const { computeTotalPrice } = storeToRefs(ShoppingStore);
+
+const totalPrice = computeTotalPrice;
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full shadow-lg bg-gray-100 p-4">
+  <div class="w-full h-full shadow-lg bg-gray-100 p-4" v-if="chosenItems">
     <el-scrollbar height="1000">
       <div class="w-full h-full bg-white shadow-lg">
         <div
@@ -13,8 +13,8 @@
               <p class="text-center text-xl text-red-500">¥ {{ chosenItem.price }}</p>
             </div>
             <div class="h-full w-1/3">
-              <el-button type="default" @click="subtract" circle>-</el-button>
-              <el-button type="primary" @click="add" circle>+</el-button>
+              <el-button type="default" @click="decreaseAmount(itemName)" circle>-</el-button>
+              <el-button type="primary" @click="increaseAmount(itemName)" circle>+</el-button>
             </div>
             <div class="h-full aspect-square shadow-lg">
               <h1>{{ chosenItem.amount }}</h1>
@@ -23,6 +23,9 @@
         </div>
       </div>
     </el-scrollbar>
+  </div>
+  <div v-else class="w-full h-full shadow-lg bg-gray-100 p-4">
+    <h1 class="text-center">购物车是空的，请去添加一些吧！</h1>
   </div>
 </template>
 
@@ -33,5 +36,5 @@ import { storeToRefs } from "pinia";
 
 const ShoppingStore = useShoppingStore();
 
-const chosenItems = storeToRefs(ShoppingStore);
+const { chosenItems } = storeToRefs(ShoppingStore);
 </script>
