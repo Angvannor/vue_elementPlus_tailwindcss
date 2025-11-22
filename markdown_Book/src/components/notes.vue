@@ -5,10 +5,7 @@
   -->
   <div class="w-full h-full p-3 overflow-y-auto custom-scrollbar">
     <!-- 1. 空状态 (功能保留) -->
-    <div
-      v-if="filteredNotes.length === 0"
-      class="text-center text-gray-400 dark:text-gray-500 pt-10"
-    >
+    <div v-if="filteredNotes.length === 0" class="text-center text-gray-400 pt-10 empty-state-text">
       <h1 class="text-xl font-bold" v-if="notes.length === 0">现在还没有笔记哦~~</h1>
       <h1 class="text-xl font-bold" v-else>未找到匹配的笔记</h1>
     </div>
@@ -19,10 +16,10 @@
         v-for="note in filteredNotes"
         :key="note.id"
         @click="selectNote(note.id)"
-        class="w-full p-4 mb-2 rounded-lg cursor-pointer transition-colors duration-150"
+        class="w-full p-4 mb-2 rounded-lg cursor-pointer transition-colors duration-150 note-item"
         :class="{
           'active-note': note.id === selectedNoteId,
-          'hover:bg-gray-100 dark:hover:bg-gray-600': note.id !== selectedNoteId,
+          'hover:bg-gray-100': note.id !== selectedNoteId,
         }"
       >
         <div class="flex justify-between items-center">
@@ -37,7 +34,7 @@
             size="small"
           ></el-button>
         </div>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
+        <p class="text-sm text-gray-500 mt-1 truncate note-content-preview">
           {{ note.content.substring(0, 50).replace(/(\r\n|\n|\r)/gm, " ") }}...
         </p>
       </div>
@@ -60,11 +57,24 @@ const { selectNote, deleteNote } = noteStore;
 .active-note {
   background-color: #dbeafe; /* blue-100 */
 }
+
 html.dark .active-note {
   background-color: #2563eb; /* blue-600 */
 }
 
-/* 自定义滚动条 */
+html.dark .note-item:not(.active-note):hover {
+  background-color: #4b5563; /* gray-600 */
+}
+
+html.dark .empty-state-text {
+  color: #6b7280; /* gray-500 */
+}
+
+html.dark .note-content-preview {
+  color: #9ca3af; /* gray-400 */
+}
+
+/* --- 原有的滚动条样式 --- */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }

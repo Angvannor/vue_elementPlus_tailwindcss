@@ -42,7 +42,7 @@ onMounted(() => {
 
     <!-- 2. 主内容区 (w-3/4 h-2/3) -->
     <div class="w-3/4 h-2/3 m-auto flex">
-      <!-- 2.1 左侧面板 (完全恢复您原先的嵌套结构) -->
+      <!-- 2.1 左侧面板  -->
       <div class="w-1/3 h-full">
         <!-- 外部容器 (bg-gray-50) -->
         <div class="h-full shadow-lg rounded-l-2xl m-auto p-5 bg-white dark:bg-gray-800">
@@ -132,5 +132,13 @@ html.dark .bg-white {
 }
 html.dark .bg-gray-50 {
   background-color: #374151; /* gray-700 */
+}
+
+html.dark .bg-gray-100 {
+  background-color: #4a5568;
+}
+
+html.dark .text-gray-900 {
+  color: white;
 }
 </style>

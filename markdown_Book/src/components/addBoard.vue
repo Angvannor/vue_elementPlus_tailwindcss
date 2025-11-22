@@ -1,7 +1,5 @@
 <template>
-  <!-- 恢复您原先的根元素 -->
   <div class="w-1/3 h-full">
-    <!-- 恢复您原先的 shadow, bg 和 p-5 -->
     <div class="h-full shadow-lg bg-white dark:bg-gray-800 p-5">
       <!-- 1. 选中笔记时 (功能保留) -->
       <div v-if="selectedNote" class="h-full flex flex-col">
@@ -9,13 +7,13 @@
           :value="selectedNote.title"
           @input="updateNoteTitle(selectedNote.id, $event.target.value)"
           placeholder="请输入标题..."
-          class="w-full h-[10%] p-2 resize-none outline-none text-lg font-bold bg-transparent border-b border-gray-200 dark:border-gray-700"
+          class="w-full h-[10%] p-2 resize-none outline-none text-3xl font-mono italic font-bold bg-transparent border-b border-gray-200 dark:border-gray-700"
         ></textarea>
         <textarea
           :value="selectedNote.content"
           @input="updateNoteContent(selectedNote.id, $event.target.value)"
           placeholder="请输入内容..."
-          class="w-full h-[90%] p-2 resize-none outline-none bg-transparent custom-scrollbar"
+          class="w-full h-[90%] p-2 resize-none outline-none text-xl font-mono bg-transparent custom-scrollbar"
         ></textarea>
       </div>
 

@@ -1,17 +1,15 @@
 <template>
-  <!-- 恢复您原先的根元素 -->
   <div class="w-1/3 h-full">
-    <!-- 
-      恢复您原先的 shadow, bg, rounded
-      添加 p-5 和 overflow-y-auto
-    -->
     <div
       class="h-full rounded-r-2xl shadow-lg bg-white dark:bg-gray-800 p-5 overflow-y-auto custom-scrollbar"
     >
       <!-- 1. 选中笔记时 (功能保留) -->
       <div v-if="selectedNote">
         <!-- 'prose' 类用于美化 Markdown 输出 -->
-        <article v-html="articleContent" class="prose dark:prose-invert max-w-none"></article>
+        <article
+          v-html="articleContent"
+          class="prose dark:prose-invert max-w-none text-2xl font-serif italic"
+        ></article>
       </div>
 
       <!-- 2. 未选中时 (功能保留) -->
