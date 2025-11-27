@@ -33,6 +33,10 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/register",
+      component: () => import("@/pages/Register.vue"),
+    },
   ],
 });
 

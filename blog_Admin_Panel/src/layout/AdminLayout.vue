@@ -6,10 +6,11 @@ import router from "@/router";
 
 <template>
   <div class="h-screen">
-    <div class="h-[10%] w-full">
+    <div class="h-[5%] w-full">
       <Header />
     </div>
-    <div class="h-[90%] w-full">
+    <div class="h-[1%] bg-gray-300"></div>
+    <div class="h-[90%] w-full flex">
       <Sidebar />
       <main class="h-full w-full">
         <router-view />
