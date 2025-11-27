@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex justify-between p-5 bg-gray-50">
+  <div class="w-full h-full flex justify-between p-5">
     <h1 class="text-3xl text-blue-400 font-bold">BLOG MANAGEMENT</h1>
     <div class="h-full p-2">
       <div>

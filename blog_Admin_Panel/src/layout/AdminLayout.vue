@@ -9,8 +9,8 @@ import router from "@/router";
     <div class="h-[5%] w-full">
       <Header />
     </div>
-    <div class="h-[1%] bg-gray-300"></div>
-    <div class="h-[90%] w-full flex">
+    <div class="h-[1%] bg-gray-100"></div>
+    <div class="h-[94%] w-full flex">
       <Sidebar />
       <main class="h-full w-full">
         <router-view />
