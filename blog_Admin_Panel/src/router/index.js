@@ -13,6 +13,10 @@ const router = createRouter({
           path: "/",
           component: () => import("@/pages/Login.vue"),
         },
+        {
+          path: "/login",
+          component: () => import("@/pages/Login.vue"),
+        },
       ],
     },
     {
@@ -30,6 +34,18 @@ const router = createRouter({
         {
           path: "catagories",
           component: () => import("@/pages/Catagories.vue"),
+        },
+        {
+          path: "users",
+          component: () => import("@/pages/Users.vue"),
+        },
+        {
+          path: "profile",
+          component: () => import("@/pages/Profile.vue"),
+        },
+        {
+          path: "settings",
+          component: () => import("@/pages/Settings.vue"),
         },
       ],
     },

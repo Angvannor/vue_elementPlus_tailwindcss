@@ -15,4 +15,8 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const jumpToLogin = () => {
+  window.location.href = "/login";
+};
+</script>
