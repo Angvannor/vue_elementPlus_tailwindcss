@@ -22,13 +22,6 @@
         <el-menu-item index="2-1" @click="jumpToUsers">用户列表</el-menu-item>
         <el-menu-item index="2-2" @click="jumpToProfile">个人设置</el-menu-item>
       </el-sub-menu>
-      <el-sub-menu index="3">
-        <template #title>
-          <el-icon><Setting /></el-icon>
-          <span>系统设置</span>
-        </template>
-        <el-menu-item index="3-1" @click="jumpToBasicSettings">基本设置</el-menu-item>
-      </el-sub-menu>
     </el-menu>
   </div>
 </template>

@@ -43,10 +43,6 @@ const router = createRouter({
           path: "profile",
           component: () => import("@/pages/Profile.vue"),
         },
-        {
-          path: "settings",
-          component: () => import("@/pages/Settings.vue"),
-        },
       ],
     },
     {
