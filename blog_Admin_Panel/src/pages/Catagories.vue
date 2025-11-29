@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-full">
     <div class="w-full h-[10%] flex items-center justify-between px-4">
-      <el-button type="danger" @click="addCategory"> Add Category </el-button>
+      <el-button type="danger" @click="addCategory">添加类别</el-button>
     </div>
     <el-divider :direction="horizontal" :content-position="center"></el-divider>
     <div class="w-full p-10">
