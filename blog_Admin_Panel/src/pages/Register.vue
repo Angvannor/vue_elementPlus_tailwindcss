@@ -7,12 +7,21 @@
           <h1 class="text-4xl font-bold text-center">注册</h1>
         </div>
         <div class="h-3/5 w-2/3 m-auto mt-8">
-          <el-input placeholder="Username" class="h-[10%]!"></el-input>
-          <el-input placeholder="Password" class="h-[10%]! mt-4"></el-input>
-          <el-input placeholder="Confirm Password" class="h-[10%]! mt-4"></el-input>
+          <el-input placeholder="Username" v-model="username" class="h-[10%]!"></el-input>
+          <el-input placeholder="Password" v-model="password" class="h-[10%]! mt-4"></el-input>
+          <el-input
+            placeholder="Confirm Password"
+            v-model="confirmPassword"
+            class="h-[10%]! mt-4"
+          ></el-input>
         </div>
         <div class="h-1/5 w-1/5 m-auto mt-4">
-          <el-button type="primary" class="w-full!" @click="RegisterAccount">注册</el-button>
+          <el-button
+            type="primary"
+            class="w-full!"
+            @click="RegisterAccount({ username, password, confirmPassword })"
+            >注册</el-button
+          >
         </div>
       </div>
     </div>
@@ -22,10 +31,14 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+
+import { useUserStore } from "@/stores/counter";
+const userStore = useUserStore();
+
+const { users } = storeToRefs(userStore);
+
+const { RegisterAccount } = userStore;
 
 const router = useRouter();
-
-const RegisterAccount = () => {
-  router.push("/admin");
-};
 </script>

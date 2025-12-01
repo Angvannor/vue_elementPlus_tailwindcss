@@ -15,7 +15,9 @@
           </div>
         </div>
         <div class="h-1/5 w-1/5 m-auto mt-4">
-          <el-button type="primary" @click="LoginAccount" class="w-full!">登录</el-button>
+          <el-button type="primary" @click="LoginAccount({ username, password })" class="w-full!"
+            >登录</el-button
+          >
         </div>
       </div>
     </div>
@@ -25,6 +27,14 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+
+import { useUserStore } from "@/stores/counter";
+const userStore = useUserStore();
+
+const { users } = storeToRefs(userStore);
+
+const { LoginAccount } = userStore;
 
 const router = useRouter();
 
