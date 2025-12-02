@@ -49,13 +49,13 @@
       <div class="w-full h-1/6 flex justify-end pr-6 pt-6">
         <el-button
           icon="el-icon-close"
-          class="bg-blue-500! text-white!"
+          class="bg-blue-500! text-white! text-center!"
           circle
           @click="confirmAdd = false"
           >X</el-button
         >
       </div>
-      <div class="w-full h-1/3 flex flex-col items-center">
+      <div class="w-full h-5/6 flex flex-col items-center">
         <div class="w-4/5 h-1/6">
           <el-input placeholder="文章标题" v-model="postTitle" class="w-full!"></el-input>
         </div>
@@ -65,6 +65,8 @@
             placeholder="文章内容"
             v-model="postContent"
             class="w-full! h-full!"
+            :rows="10"
+            resize="none"
           ></el-input>
         </div>
         <div class="w-full h-1/3 flex justify-around items-center p-4">
@@ -89,7 +91,7 @@
             </el-select>
           </div>
         </div>
-        <div class="w-4/5 h-1/6 mt-40 flex justify-center items-center">
+        <div class="w-4/5 h-1/6 mt-4 flex justify-center items-center">
           <el-button
             type="primary"
             @click="

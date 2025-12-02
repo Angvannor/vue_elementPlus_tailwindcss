@@ -7,10 +7,10 @@
           <h1 class="text-4xl font-bold text-center">注册</h1>
         </div>
         <div class="h-3/5 w-2/3 m-auto mt-8">
-          <el-input placeholder="Username" v-model="username" class="h-[10%]!"></el-input>
-          <el-input placeholder="Password" v-model="password" class="h-[10%]! mt-4"></el-input>
+          <el-input placeholder="用户名" v-model="username" class="h-[10%]!"></el-input>
+          <el-input placeholder="密码" v-model="password" class="h-[10%]! mt-4"></el-input>
           <el-input
-            placeholder="Confirm Password"
+            placeholder="确认密码"
             v-model="confirmPassword"
             class="h-[10%]! mt-4"
           ></el-input>

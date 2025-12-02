@@ -74,3 +74,25 @@ export const useBlogStore = defineStore("blog", () => {
 
   return { posts, addPost, searchPost };
 });
+
+export const useCategoryStore = defineStore("category", () => {
+  const categories = ref([]);
+
+  const addCategory = (category) => {
+    if (categories.value.includes(category)) {
+      ElMessage({
+        message: "类别已存在",
+        type: "error",
+      });
+      return false;
+    }
+    categories.value.push(category);
+    ElMessage({
+      message: "类别添加成功",
+      type: "success",
+    });
+    return true;
+  };
+
+  return { categories, addCategory };
+});
