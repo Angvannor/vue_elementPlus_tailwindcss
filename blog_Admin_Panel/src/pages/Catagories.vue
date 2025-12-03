@@ -53,7 +53,6 @@ import { useCategoryStore } from "@/stores/counter";
 import { storeToRefs } from "pinia";
 
 const categoryStore = useCategoryStore();
-const { categories } = storeToRefs(categoryStore);
 const { addCategory } = categoryStore;
 
 const confirmAdd = ref(false);

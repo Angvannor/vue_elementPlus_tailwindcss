@@ -16,12 +16,7 @@
           ></el-input>
         </div>
         <div class="h-1/5 w-1/5 m-auto mt-4">
-          <el-button
-            type="primary"
-            class="w-full!"
-            @click="RegisterAccount({ username, password, confirmPassword })"
-            >注册</el-button
-          >
+          <el-button type="primary" class="w-full!" @click="onRegister">注册</el-button>
         </div>
       </div>
     </div>
@@ -31,14 +26,25 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { storeToRefs } from "pinia";
-
 import { useUserStore } from "@/stores/counter";
-const userStore = useUserStore();
-
-const { users } = storeToRefs(userStore);
-
-const { RegisterAccount } = userStore;
+import { ElMessage } from "element-plus";
 
 const router = useRouter();
+const userStore = useUserStore();
+
+const username = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+
+const onRegister = () => {
+  const ok = userStore.RegisterAccount({
+    username: username.value,
+    password: password.value,
+    confirmPassword: confirmPassword.value,
+  });
+  if (ok) {
+    ElMessage.success("注册成功，进入管理页面");
+    router.push("/admin");
+  }
+};
 </script>

@@ -42,7 +42,11 @@
         <el-table-column prop="category" label="类别" width="360" />
         <el-table-column prop="status" label="状态" width="360" />
         <el-table-column prop="date" label="日期" />
-        <el-table-column label="操作" width="100" fixed="right"> </el-table-column>
+        <el-table-column label="操作" width="150" fixed="right">
+          <template #default="{ row }">
+            <el-button type="danger" size="small" @click="removePost(row.id)">删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <div class="w-1/3 h-1/2 rounded-2xl bg-gray-50 m-auto z-10" v-if="confirmAdd">
@@ -118,7 +122,17 @@ import { useBlogStore } from "@/stores/counter";
 const blogStore = useBlogStore();
 
 const { posts } = storeToRefs(blogStore);
-const { searchPost, addPost } = blogStore;
+const { searchPost, addPost, deletePost } = blogStore;
 
 const confirmAdd = ref(false);
+
+const removePost = (id) => {
+  ElMessageBox.confirm("确定删除吗?", "警告", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(() => {
+    deletePost(id);
+  });
+};
 </script>
