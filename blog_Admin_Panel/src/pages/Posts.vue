@@ -32,10 +32,11 @@
         >
       </div>
     </div>
+
     <div class="w-full pl-10">
       <el-button type="danger" @click="confirmAdd = true">添加文章</el-button>
     </div>
-    <el-divider :direction="horizontal" :content-position="center"></el-divider>
+    <el-divider direction="horizontal" content-position="center"></el-divider>
     <div class="pl-10">
       <el-table :data="posts" style="width: 100%">
         <el-table-column prop="information" label="信息" width="1440" />
@@ -49,33 +50,30 @@
         </el-table-column>
       </el-table>
     </div>
+
     <div class="w-1/3 h-1/2 rounded-2xl bg-gray-50 m-auto z-10" v-if="confirmAdd">
       <div class="w-full h-1/6 flex justify-end pr-6 pt-6">
-        <el-button
-          icon="el-icon-close"
-          class="bg-blue-500! text-white! text-center!"
-          circle
-          @click="confirmAdd = false"
-          >X</el-button
-        >
+        <el-button circle @click="confirmAdd = false">X</el-button>
       </div>
+
       <div class="w-full h-5/6 flex flex-col items-center">
         <div class="w-4/5 h-1/6">
           <el-input placeholder="文章标题" v-model="postTitle" class="w-full!"></el-input>
         </div>
-        <div class="w-4/5 h-1/2 mt-4">
+
+        <div class="w-4/5 h-2/5 mt-4">
           <el-input
             type="textarea"
             placeholder="文章内容"
             v-model="postContent"
             class="w-full! h-full!"
-            :rows="10"
             resize="none"
           ></el-input>
         </div>
-        <div class="w-full h-1/3 flex justify-around items-center p-4">
-          <div class="w-1/3">
-            <el-select placeholder="选择类别" v-model="postCategory">
+
+        <div class="w-4/5 h-1/6 mt-4 flex justify-between gap-4">
+          <div class="w-1/2">
+            <el-select placeholder="选择类别" v-model="postCategory" class="w-full!">
               <el-option
                 v-for="post in posts"
                 :key="post.value"
@@ -84,8 +82,8 @@
               ></el-option>
             </el-select>
           </div>
-          <div class="w-1/3">
-            <el-select placeholder="选择状态" v-model="postStatus">
+          <div class="w-1/2">
+            <el-select placeholder="选择状态" v-model="postStatus" class="w-full!">
               <el-option
                 v-for="post in posts"
                 :key="post.value"
@@ -95,7 +93,8 @@
             </el-select>
           </div>
         </div>
-        <div class="w-4/5 h-1/6 mt-4 flex justify-center items-center">
+
+        <div class="w-full h-1/3 flex justify-center items-center p-4">
           <el-button
             type="primary"
             @click="
@@ -104,9 +103,10 @@
                 content: postContent,
                 category: postCategory,
                 status: postStatus,
-              })
+              });
+              confirmAdd = false;
             "
-            >添加文章</el-button
+            >确认添加</el-button
           >
         </div>
       </div>
@@ -116,11 +116,11 @@
 
 <script setup>
 import { ref } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { storeToRefs } from "pinia";
-
 import { useBlogStore } from "@/stores/counter";
-const blogStore = useBlogStore();
 
+const blogStore = useBlogStore();
 const { posts } = storeToRefs(blogStore);
 const { searchPost, addPost, deletePost } = blogStore;
 

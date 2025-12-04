@@ -14,7 +14,7 @@
     <div class="w-full pl-10">
       <el-button type="danger" @click="confirmAdd = true">添加账户</el-button>
     </div>
-    <el-divider :direction="horizontal" :content-position="center"></el-divider>
+    <el-divider direction="horizontal" content-position="center"></el-divider>
     <div class="pl-10">
       <el-table :data="displayAccounts" style="width: 100%">
         <el-table-column prop="avatar" label="头像" width="180">

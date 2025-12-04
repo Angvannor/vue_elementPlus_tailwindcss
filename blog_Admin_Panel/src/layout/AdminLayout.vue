@@ -11,8 +11,10 @@ import router from "@/router";
     </div>
     <div class="h-[1%] bg-gray-100"></div>
     <div class="h-[94%] w-full flex">
-      <Sidebar />
-      <main class="h-full w-full">
+      <div class="w-1/8 shrink-0 h-full">
+        <Sidebar />
+      </div>
+      <main class="h-full flex-1 min-w-0 overflow-auto">
         <router-view />
       </main>
     </div>

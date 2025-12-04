@@ -1,5 +1,5 @@
 <template>
-  <div class="w-1/8 h-full bg-gray-100">
+  <div class="w-full h-full bg-gray-100">
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"

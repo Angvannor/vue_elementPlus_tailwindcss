@@ -3,7 +3,7 @@
     <div class="w-full h-[10%] flex items-center justify-between px-4">
       <el-button type="danger" @click="confirmAdd = true">添加类别</el-button>
     </div>
-    <el-divider :direction="horizontal" :content-position="center"></el-divider>
+    <el-divider direction="horizontal" content-position="center"></el-divider>
     <div class="w-full p-10">
       <el-table :data="data">
         <el-table-column label="名称" prop="name" width="720"></el-table-column>
@@ -48,11 +48,11 @@
 
 <script setup>
 import { ref } from "vue";
-
 import { useCategoryStore } from "@/stores/counter";
 import { storeToRefs } from "pinia";
 
 const categoryStore = useCategoryStore();
+const { categories: data } = storeToRefs(categoryStore);
 const { addCategory } = categoryStore;
 
 const confirmAdd = ref(false);
