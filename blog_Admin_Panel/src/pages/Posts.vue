@@ -14,7 +14,7 @@
           ></el-option>
         </el-select>
       </div>
-      <div class="w-1/6 h-full flex items-center pl-6">
+      <div class="w-1/8 h-full flex items-center pl-6">
         <el-select placeholder="选择类别" v-model="category">
           <el-option
             v-for="post in posts"
@@ -36,10 +36,12 @@
     <div class="w-full pl-10">
       <el-button type="danger" @click="confirmAdd = true">添加文章</el-button>
     </div>
+
     <el-divider direction="horizontal" content-position="center"></el-divider>
+
     <div class="pl-10">
       <el-table :data="posts" style="width: 100%">
-        <el-table-column prop="information" label="信息" width="1440" />
+        <el-table-column prop="information" label="信息" width="1080" />
         <el-table-column prop="category" label="类别" width="360" />
         <el-table-column prop="status" label="状态" width="360" />
         <el-table-column prop="date" label="日期" />
@@ -55,22 +57,20 @@
       <div class="w-full h-1/6 flex justify-end pr-6 pt-6">
         <el-button circle @click="confirmAdd = false">X</el-button>
       </div>
-
       <div class="w-full h-5/6 flex flex-col items-center">
         <div class="w-4/5 h-1/6">
           <el-input placeholder="文章标题" v-model="postTitle" class="w-full!"></el-input>
         </div>
-
-        <div class="w-4/5 h-2/5 mt-4">
+        <div class="w-4/5 h-[75%] mt-4">
           <el-input
             type="textarea"
             placeholder="文章内容"
             v-model="postContent"
             class="w-full! h-full!"
             resize="none"
+            rows="10"
           ></el-input>
         </div>
-
         <div class="w-4/5 h-1/6 mt-4 flex justify-between gap-4">
           <div class="w-1/2">
             <el-select placeholder="选择类别" v-model="postCategory" class="w-full!">
@@ -93,7 +93,6 @@
             </el-select>
           </div>
         </div>
-
         <div class="w-full h-1/3 flex justify-center items-center p-4">
           <el-button
             type="primary"

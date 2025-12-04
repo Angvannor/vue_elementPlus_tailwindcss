@@ -44,8 +44,4 @@ const jumpToUsers = () => {
 const jumpToProfile = () => {
   router.push("/admin/profile");
 };
-
-const jumpToBasicSettings = () => {
-  router.push("/admin/settings");
-};
 </script>
