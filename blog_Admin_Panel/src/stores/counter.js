@@ -63,14 +63,17 @@ export const useBlogStore = defineStore("blog", () => {
   };
 
   const searchPost = (data) => {
-    return posts.value.filter(
+    const keyword = data.keyword || "";
+    const category = data.category || "";
+    const status = data.status || "";
+
+    const filteredPosts = posts.value.filter(
       (post) =>
-        (data.keyword === "" ||
-          post.title.includes(data.keyword) ||
-          post.content.includes(data.keyword)) &&
-        (data.category === "全部" || post.category === data.category) &&
-        (data.status === "全部" || post.status === data.status)
+        (keyword === "" || post.title.includes(keyword) || post.content.includes(keyword)) &&
+        (category === "全部" || post.category === category) &&
+        (status === "全部" || post.status === status)
     );
+    return filteredPosts;
   };
 
   return { posts, addPost, deletePost, searchPost };
@@ -107,4 +110,35 @@ export const useUserManageStore = defineStore("userManage", () => {
   };
 
   return { accounts, addAccount, deleteAccount, searchAccount };
+});
+
+// 类别管理（Categories 页面使用的 store）
+export const useCategoryStore = defineStore("category", () => {
+  const defaultCategories = [
+    { id: 1, name: "技术", description: "技术分享与教程", count: 0 },
+    { id: 2, name: "生活", description: "生活随笔记录", count: 0 },
+  ];
+
+  const categories = ref(JSON.parse(localStorage.getItem("categories")) || defaultCategories);
+
+  const addCategory = (name, description) => {
+    const exists = categories.value.some((cat) => cat.name === name);
+    if (!exists) {
+      categories.value.push({ id: Date.now(), name, description, count: 0 });
+      localStorage.setItem("categories", JSON.stringify(categories.value));
+      ElMessage({ message: "类别添加成功", type: "success" });
+      return true;
+    } else {
+      ElMessage({ message: "类别已存在", type: "error" });
+      return false;
+    }
+  };
+
+  const deleteCategory = (name) => {
+    categories.value = categories.value.filter((cat) => cat.name !== name);
+    localStorage.setItem("categories", JSON.stringify(categories.value));
+    ElMessage({ message: "类别删除成功", type: "success" });
+  };
+
+  return { categories, addCategory, deleteCategory };
 });

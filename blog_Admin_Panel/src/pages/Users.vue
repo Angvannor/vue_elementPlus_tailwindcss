@@ -7,9 +7,6 @@
       <div class="w-1/6 h-full flex items-center">
         <el-input placeholder="搜索电话号码" v-model="searchPhone"></el-input>
       </div>
-      <div class="w-4/7 h-full flex items-center">
-        <el-button type="danger" @click="Search">搜索</el-button>
-      </div>
     </div>
     <div class="w-full pl-10">
       <el-button type="danger" @click="confirmAdd = true">添加账户</el-button>

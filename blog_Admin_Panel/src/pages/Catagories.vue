@@ -5,11 +5,15 @@
     </div>
     <el-divider direction="horizontal" content-position="center"></el-divider>
     <div class="w-full p-10">
-      <el-table :data="data">
+      <el-table :data="categories" style="width: 100%">
         <el-table-column label="名称" prop="name" width="540"></el-table-column>
-        <el-table-column label="简介" width="1080"> </el-table-column>
-        <el-table-column label="博客数"> </el-table-column>
-        <el-table-column label="操作" width="360" fixed="right"> </el-table-column>
+        <el-table-column label="简介" prop="description" width="1080"> </el-table-column>
+        <el-table-column label="博客数" prop="count"> </el-table-column>
+        <el-table-column label="操作" width="200" fixed="right">
+          <template #default="{ row }">
+            <el-button type="danger" size="small" @click="handleDelete(row.id)">删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
 
@@ -33,7 +37,7 @@
         </div>
         <div class="w-full h-1/3 flex justify-around items-center p-4">
           <div class="w-full flex justify-center">
-            <el-button type="primary" @click="addCategory">确认添加</el-button>
+            <el-button type="primary" @click="handleAdd">确认添加</el-button>
           </div>
         </div>
       </div>
@@ -44,6 +48,37 @@
 <script setup>
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
+import { useCategoryStore } from "@/stores/counter";
+import { ElMessageBox } from "element-plus";
 
+const categoryStore = useCategoryStore();
+const { categories } = storeToRefs(categoryStore);
+const { addCategory, deleteCategory } = categoryStore;
+
+const categoryName = ref("");
+const categoryDescription = ref("");
 const confirmAdd = ref(false);
+
+const handleAdd = () => {
+  if (!categoryName.value) {
+    ElMessage({ message: "类别名称不能为空", type: "error" });
+    return;
+  }
+  const success = addCategory(categoryName.value, categoryDescription.value);
+  if (success) {
+    categoryName.value = "";
+    categoryDescription.value = "";
+    confirmAdd.value = false;
+  }
+};
+
+const handleDelete = (id) => {
+  ElMessageBox.confirm("确定删除该类别吗?", "警告", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(() => {
+    deleteCategory(id);
+  });
+};
 </script>

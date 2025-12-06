@@ -6,21 +6,16 @@
       </div>
       <div class="w-1/8 h-full flex items-center pl-6">
         <el-select placeholder="选择状态" v-model="status">
-          <el-option
-            v-for="post in posts"
-            :key="post.value"
-            :label="post.status"
-            :value="post.value"
-          ></el-option>
+          <el-option v-for="stat in status" :key="stat" :label="stat" :value="stat"></el-option>
         </el-select>
       </div>
       <div class="w-1/8 h-full flex items-center pl-6">
         <el-select placeholder="选择类别" v-model="category">
           <el-option
-            v-for="post in posts"
-            :key="post.value"
-            :label="post.category"
-            :value="post.value"
+            v-for="category in categories"
+            :key="category.value"
+            :label="category.name"
+            :value="category.value"
           ></el-option>
         </el-select>
       </div>
@@ -40,8 +35,8 @@
     <el-divider direction="horizontal" content-position="center"></el-divider>
 
     <div class="pl-10">
-      <el-table :data="posts" style="width: 100%">
-        <el-table-column prop="information" label="信息" width="1080" />
+      <el-table :data="displayPosts" style="width: 100%">
+        <el-table-column prop="title" label="信息" width="1080" />
         <el-table-column prop="category" label="类别" width="360" />
         <el-table-column prop="status" label="状态" width="360" />
         <el-table-column prop="date" label="日期" />
@@ -114,16 +109,67 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { storeToRefs } from "pinia";
 import { useBlogStore } from "@/stores/counter";
+import { useCategoryStore } from "@/stores/counter";
 
 const blogStore = useBlogStore();
 const { posts } = storeToRefs(blogStore);
 const { searchPost, addPost, deletePost } = blogStore;
 
+const categoryStore = useCategoryStore();
+const { categories } = storeToRefs(categoryStore);
+
 const confirmAdd = ref(false);
+const statusOptions = ["草稿", "已发布", "归档"];
+
+const displayPosts = ref([]);
+
+watchEffect(() => {
+  if (!searchKeyword.value && !searchStatus.value && !searchCategory.value) {
+    displayPosts.value = [...posts.value];
+  }
+});
+
+const handleSearch = () => {
+  displayPosts.value = searchPost({
+    keyword: searchKeyword.value,
+    status: searchStatus.value,
+    category: searchCategory.value,
+  });
+};
+
+const resetSearch = () => {
+  searchKeyword.value = "";
+  searchStatus.value = "";
+  searchCategory.value = "";
+  displayPosts.value = [...posts.value];
+};
+
+const postTitle = ref("");
+const postContent = ref("");
+const postCategory = ref("");
+const postStatus = ref("");
+
+const handleAddPost = () => {
+  if (!postTitle.value || !postContent.value || !postCategory.value || !postStatus.value) {
+    ElMessage.warning("请填写完整信息");
+    return;
+  }
+  addPost({
+    title: postTitle.value,
+    content: postContent.value,
+    category: postCategory.value,
+    status: postStatus.value || "草稿",
+  });
+  postTitle.value = "";
+  postContent.value = "";
+  postCategory.value = "";
+  postStatus.value = "";
+  confirmAdd.value = false;
+};
 
 const removePost = (id) => {
   ElMessageBox.confirm("确定删除吗?", "警告", {
@@ -132,6 +178,7 @@ const removePost = (id) => {
     type: "warning",
   }).then(() => {
     deletePost(id);
+    handleSearch();
   });
 };
 </script>
