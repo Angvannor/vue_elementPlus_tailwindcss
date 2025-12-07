@@ -1,184 +1,138 @@
 <template>
-  <div class="h-full w-full">
-    <div class="w-full h-[10%] flex justify-between">
-      <div class="w-1/6 h-full flex items-center pl-6">
-        <el-input placeholder="搜索文章名" v-model="name"></el-input>
-      </div>
-      <div class="w-1/8 h-full flex items-center pl-6">
-        <el-select placeholder="选择状态" v-model="status">
-          <el-option v-for="stat in status" :key="stat" :label="stat" :value="stat"></el-option>
+  <div class="h-full w-full p-6">
+    <div class="flex justify-between mb-4">
+      <div class="flex gap-4">
+        <el-input v-model="searchKeyword" placeholder="搜索文章标题或内容" class="w-64" clearable />
+        <el-select v-model="searchCategory" placeholder="全部分类" class="w-32">
+          <el-option label="全部" value="全部" />
+          <el-option label="技术" value="技术" />
+          <el-option label="生活" value="生活" />
         </el-select>
+        <el-button type="primary" @click="handleSearch">搜索</el-button>
       </div>
-      <div class="w-1/8 h-full flex items-center pl-6">
-        <el-select placeholder="选择类别" v-model="category">
-          <el-option
-            v-for="category in categories"
-            :key="category.value"
-            :label="category.name"
-            :value="category.value"
-          ></el-option>
-        </el-select>
-      </div>
-      <div class="w-1/2 h-full flex items-center pl-6">
-        <el-button
-          type="danger"
-          @click="searchPost({ keyword: name, status: status, category: category })"
-          >搜索</el-button
-        >
-      </div>
+      <el-button type="success" @click="dialogVisible = true">发布文章</el-button>
     </div>
 
-    <div class="w-full pl-10">
-      <el-button type="danger" @click="confirmAdd = true">添加文章</el-button>
-    </div>
+    <el-divider />
 
-    <el-divider direction="horizontal" content-position="center"></el-divider>
+    <el-table :data="displayPosts" style="width: 100%" height="calc(100% - 100px)">
+      <el-table-column prop="title" label="标题" width="200" />
+      <el-table-column prop="category" label="分类" width="100">
+        <template #default="{ row }">
+          <el-tag>{{ row.category }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="content" label="内容摘要" show-overflow-tooltip />
+      <el-table-column prop="date" label="发布时间" width="180" />
+      <el-table-column label="状态" width="100">
+        <template #default="{ row }">
+          <el-tag :type="row.status === '已发布' ? 'success' : 'info'">{{ row.status }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="100" fixed="right">
+        <template #default="{ row }">
+          <el-button type="danger" size="small" @click="handleDelete(row.id)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
-    <div class="pl-10">
-      <el-table :data="displayPosts" style="width: 100%">
-        <el-table-column prop="title" label="信息" width="1080" />
-        <el-table-column prop="category" label="类别" width="360" />
-        <el-table-column prop="status" label="状态" width="360" />
-        <el-table-column prop="date" label="日期" />
-        <el-table-column label="操作" width="150" fixed="right">
-          <template #default="{ row }">
-            <el-button type="danger" size="small" @click="removePost(row.id)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-
-    <div class="w-1/3 h-1/2 rounded-2xl bg-gray-50 m-auto z-10" v-if="confirmAdd">
-      <div class="w-full h-1/6 flex justify-end pr-6 pt-6">
-        <el-button circle @click="confirmAdd = false">X</el-button>
-      </div>
-      <div class="w-full h-5/6 flex flex-col items-center">
-        <div class="w-4/5 h-1/6">
-          <el-input placeholder="文章标题" v-model="postTitle" class="w-full!"></el-input>
-        </div>
-        <div class="w-4/5 h-[75%] mt-4">
+    <el-dialog title="发布新文章" v-model="dialogVisible" width="50%">
+      <el-form :model="newPost" label-width="80px">
+        <el-form-item label="标题">
+          <el-input v-model="newPost.title" placeholder="请输入文章标题" />
+        </el-form-item>
+        <el-form-item label="分类">
+          <el-select v-model="newPost.category" placeholder="请选择分类">
+            <el-option label="技术" value="技术" />
+            <el-option label="生活" value="生活" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-radio-group v-model="newPost.status">
+            <el-radio label="已发布">直接发布</el-radio>
+            <el-radio label="草稿">存为草稿</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="内容">
           <el-input
+            v-model="newPost.content"
             type="textarea"
-            placeholder="文章内容"
-            v-model="postContent"
-            class="w-full! h-full!"
-            resize="none"
-            rows="10"
-          ></el-input>
-        </div>
-        <div class="w-4/5 h-1/6 mt-4 flex justify-between gap-4">
-          <div class="w-1/2">
-            <el-select placeholder="选择类别" v-model="postCategory" class="w-full!">
-              <el-option
-                v-for="post in posts"
-                :key="post.value"
-                :label="post.category"
-                :value="post.value"
-              ></el-option>
-            </el-select>
-          </div>
-          <div class="w-1/2">
-            <el-select placeholder="选择状态" v-model="postStatus" class="w-full!">
-              <el-option
-                v-for="post in posts"
-                :key="post.value"
-                :label="post.status"
-                :value="post.value"
-              ></el-option>
-            </el-select>
-          </div>
-        </div>
-        <div class="w-full h-1/3 flex justify-center items-center p-4">
-          <el-button
-            type="primary"
-            @click="
-              addPost({
-                title: postTitle,
-                content: postContent,
-                category: postCategory,
-                status: postStatus,
-              });
-              confirmAdd = false;
-            "
-            >确认添加</el-button
-          >
-        </div>
-      </div>
-    </div>
+            :rows="6"
+            placeholder="请输入文章内容"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitPost">确定发布</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, watchEffect } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
-import { storeToRefs } from "pinia";
+import { ref, computed } from "vue";
 import { useBlogStore } from "@/stores/counter";
-import { useCategoryStore } from "@/stores/counter";
+import { storeToRefs } from "pinia";
+import { ElMessage } from "element-plus";
 
 const blogStore = useBlogStore();
 const { posts } = storeToRefs(blogStore);
-const { searchPost, addPost, deletePost } = blogStore;
+const { addPost, deletePost } = blogStore;
 
-const categoryStore = useCategoryStore();
-const { categories } = storeToRefs(categoryStore);
+// 搜索状态
+const searchKeyword = ref("");
+const searchCategory = ref("全部");
 
-const confirmAdd = ref(false);
-const statusOptions = ["草稿", "已发布", "归档"];
-
-const displayPosts = ref([]);
-
-watchEffect(() => {
-  if (!searchKeyword.value && !searchStatus.value && !searchCategory.value) {
-    displayPosts.value = [...posts.value];
-  }
+// 弹窗状态
+const dialogVisible = ref(false);
+const newPost = ref({
+  title: "",
+  category: "技术",
+  status: "已发布",
+  content: "",
 });
 
-const handleSearch = () => {
-  displayPosts.value = searchPost({
-    keyword: searchKeyword.value,
-    status: searchStatus.value,
-    category: searchCategory.value,
+// 计算属性：根据搜索条件过滤文章
+const displayPosts = computed(() => {
+  return posts.value.filter((post) => {
+    const matchKeyword =
+      !searchKeyword.value ||
+      post.title.includes(searchKeyword.value) ||
+      post.content.includes(searchKeyword.value);
+    const matchCategory = searchCategory.value === "全部" || post.category === searchCategory.value;
+    return matchKeyword && matchCategory;
   });
+});
+
+// 搜索按钮（其实 computed 已经自动处理了，这里仅作为占位）
+const handleSearch = () => {
+  // 自动响应
 };
 
-const resetSearch = () => {
-  searchKeyword.value = "";
-  searchStatus.value = "";
-  searchCategory.value = "";
-  displayPosts.value = [...posts.value];
-};
-
-const postTitle = ref("");
-const postContent = ref("");
-const postCategory = ref("");
-const postStatus = ref("");
-
-const handleAddPost = () => {
-  if (!postTitle.value || !postContent.value || !postCategory.value || !postStatus.value) {
-    ElMessage.warning("请填写完整信息");
+// 提交文章
+const submitPost = () => {
+  if (!newPost.value.title || !newPost.value.content) {
+    ElMessage.warning("标题和内容不能为空");
     return;
   }
-  addPost({
-    title: postTitle.value,
-    content: postContent.value,
-    category: postCategory.value,
-    status: postStatus.value || "草稿",
-  });
-  postTitle.value = "";
-  postContent.value = "";
-  postCategory.value = "";
-  postStatus.value = "";
-  confirmAdd.value = false;
+  addPost({ ...newPost.value });
+  // 重置表单
+  newPost.value = {
+    title: "",
+    category: "技术",
+    status: "已发布",
+    content: "",
+  };
+  dialogVisible.value = false;
 };
 
-const removePost = (id) => {
-  ElMessageBox.confirm("确定删除吗?", "警告", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
-  }).then(() => {
+// 删除文章
+const handleDelete = (id) => {
+  if (confirm("确认删除这篇文章吗？")) {
     deletePost(id);
-    handleSearch();
-  });
+  }
 };
 </script>

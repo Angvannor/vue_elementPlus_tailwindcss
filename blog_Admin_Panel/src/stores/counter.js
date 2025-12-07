@@ -2,6 +2,39 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import { ElMessage } from "element-plus";
 
+// 用户管理（Users 页面使用的 store）
+export const useUserManageStore = defineStore("userManage", () => {
+  const accounts = ref(JSON.parse(localStorage.getItem("accounts") || "[]"));
+
+  const addAccount = (user) => {
+    accounts.value.push({
+      id: Date.now(),
+      name: user.name,
+      phone: user.phone || "未填写",
+      position: user.position || "新注册用户",
+      date: new Date().toLocaleDateString(),
+      avatar: "https://www.w3schools.com/howto/img_avatar.png",
+    });
+    localStorage.setItem("accounts", JSON.stringify(accounts.value));
+    ElMessage({ message: "用户添加成功", type: "success" });
+  };
+
+  const deleteAccount = (id) => {
+    accounts.value = accounts.value.filter((u) => u.id !== id);
+    localStorage.setItem("accounts", JSON.stringify(accounts.value));
+    ElMessage({ message: "用户删除成功", type: "success" });
+  };
+
+  const searchAccount = (name, phone) => {
+    return accounts.value.filter(
+      (user) =>
+        (name === "" || user.name.includes(name)) && (phone === "" || user.phone.includes(phone))
+    );
+  };
+
+  return { accounts, addAccount, deleteAccount, searchAccount };
+});
+
 // 用户信息存储与管理
 export const useUserStore = defineStore("user", () => {
   const users = ref(JSON.parse(localStorage.getItem("users") || "[]"));
@@ -25,8 +58,13 @@ export const useUserStore = defineStore("user", () => {
         return false;
       }
     }
+    // 注册新用户
     users.value.push({ username: data.username, password: data.password });
     localStorage.setItem("users", JSON.stringify(users.value));
+
+    const userManageStore = useUserManageStore();
+    userManageStore.addAccount({ name: data.username, phone: "", position: "用户" });
+
     ElMessage({ message: "注册成功", type: "success" });
     return true;
   };
@@ -97,39 +135,6 @@ export const useBlogStore = defineStore("blog", () => {
   };
 
   return { posts, addPost, deletePost, searchPost };
-});
-
-// 用户管理（Users 页面使用的 store）
-export const useUserManageStore = defineStore("userManage", () => {
-  const accounts = ref(JSON.parse(localStorage.getItem("accounts") || "[]"));
-
-  const addAccount = (user) => {
-    accounts.value.push({
-      id: Date.now(),
-      name: user.name,
-      phone: user.phone,
-      position: user.position,
-      date: new Date().toLocaleDateString(),
-      avatar: "https://www.w3schools.com/howto/img_avatar.png",
-    });
-    localStorage.setItem("accounts", JSON.stringify(accounts.value));
-    ElMessage({ message: "用户添加成功", type: "success" });
-  };
-
-  const deleteAccount = (id) => {
-    accounts.value = accounts.value.filter((u) => u.id !== id);
-    localStorage.setItem("accounts", JSON.stringify(accounts.value));
-    ElMessage({ message: "用户删除成功", type: "success" });
-  };
-
-  const searchAccount = (name, phone) => {
-    return accounts.value.filter(
-      (user) =>
-        (name === "" || user.name.includes(name)) && (phone === "" || user.phone.includes(phone))
-    );
-  };
-
-  return { accounts, addAccount, deleteAccount, searchAccount };
 });
 
 // 类别管理（Categories 页面使用的 store）

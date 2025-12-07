@@ -1,47 +1,57 @@
 <template>
-  <div class="w-full h-full">
-    <div class="pl-10 h-[10%] flex items-center">
-      <el-button type="danger" @click="confirmAdd = true">添加类别</el-button>
-    </div>
-    <el-divider direction="horizontal" content-position="center"></el-divider>
-    <div class="w-full p-10">
-      <el-table :data="categories" style="width: 100%">
-        <el-table-column label="名称" prop="name" width="540"></el-table-column>
-        <el-table-column label="简介" prop="description" width="1080"> </el-table-column>
-        <el-table-column label="博客数" prop="count"> </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+  <div class="h-full w-full p-6 bg-gray-50">
+    <div class="bg-white p-4 rounded-lg shadow-sm h-full flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold text-gray-700">文章分类管理</h2>
+        <el-button type="primary" @click="confirmAdd = true">
+          <el-icon class="mr-1"><Plus /></el-icon>添加新类别
+        </el-button>
+      </div>
+
+      <el-table :data="categories" style="width: 100%" class="flex-grow" height="100%">
+        <el-table-column label="名称" prop="name" width="200">
           <template #default="{ row }">
-            <el-button type="danger" size="small" @click="handleDelete(row.id)">删除</el-button>
+            <el-tag effect="dark">{{ row.name }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="简介" prop="description" show-overflow-tooltip></el-table-column>
+        <el-table-column label="关联文章数" prop="count" width="120" align="center">
+          <template #default="{ row }">
+            <el-badge :value="row.count" class="item" type="primary" />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="150" align="center">
+          <template #default="{ row }">
+            <el-button type="danger" size="small" icon="Delete" @click="handleDelete(row.name)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
 
-    <div class="w-1/3 h-1/2 rounded-2xl bg-gray-50 m-auto z-10" v-if="confirmAdd">
-      <div class="w-full h-1/6 flex justify-end pr-6 pt-6">
-        <el-button circle @click="confirmAdd = false">X</el-button>
-      </div>
-      <div class="w-full h-5/6 flex flex-col items-center">
-        <div class="w-4/5 h-1/6">
-          <el-input placeholder="类别名称" v-model="categoryName" class="w-full!"></el-input>
-        </div>
-        <div class="w-4/5 h-1/2 mt-4">
+    <el-dialog title="添加新类别" v-model="confirmAdd" width="30%">
+      <el-form label-width="80px">
+        <el-form-item label="类别名称">
+          <el-input v-model="categoryName" placeholder="例如：前端开发" />
+        </el-form-item>
+        <el-form-item label="类别简介">
           <el-input
             type="textarea"
-            placeholder="类别简介"
             v-model="categoryDescription"
-            class="w-full! h-full!"
-            :rows="10"
+            placeholder="请输入该类别的描述信息"
+            :rows="4"
             resize="none"
-          ></el-input>
-        </div>
-        <div class="w-full h-1/3 flex justify-around items-center p-4">
-          <div class="w-full flex justify-center">
-            <el-button type="primary" @click="handleAdd">确认添加</el-button>
-          </div>
-        </div>
-      </div>
-    </div>
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="confirmAdd = false">取消</el-button>
+          <el-button type="primary" @click="handleAdd">确认添加</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -49,7 +59,8 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useCategoryStore } from "@/stores/counter";
-import { ElMessageBox } from "element-plus";
+import { ElMessageBox, ElMessage } from "element-plus";
+import { Plus, Delete } from "@element-plus/icons-vue"; // 引入图标
 
 const categoryStore = useCategoryStore();
 const { categories } = storeToRefs(categoryStore);
@@ -72,13 +83,14 @@ const handleAdd = () => {
   }
 };
 
-const handleDelete = (id) => {
-  ElMessageBox.confirm("确定删除该类别吗?", "警告", {
+const handleDelete = (name) => {
+  // 注意：这里传的是 name 而不是 id，修复了之前的 bug
+  ElMessageBox.confirm(`确定删除类别 "${name}" 吗?`, "警告", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
   }).then(() => {
-    deleteCategory(id);
+    deleteCategory(name);
   });
 };
 </script>

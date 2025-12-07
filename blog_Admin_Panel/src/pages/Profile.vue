@@ -1,70 +1,67 @@
 <template>
-  <div class="w-full h-full">
-    <div class="w-full h-full flex justify-between">
-      <div class="w-1/2 h-full p-10 flex flex-col justify-center">
-        <div class="w-2/3 h-full m-auto flex flex-col justify-center">
-          <div class="flex items-center mb-6">
-            <h1 class="w-24 font-bold">头像：</h1>
-            <el-avatar :size="size" :src="userUrl"></el-avatar>
-            <el-input
-              v-model="userUrl"
-              placeholder="输入图片URL"
-              class="ml-4 w-1/2"
-              size="small"
-            ></el-input>
+  <div class="w-full h-full p-6 bg-gray-50 flex gap-6">
+    <el-card class="w-1/3 h-full flex flex-col items-center pt-10" shadow="sm">
+      <div class="flex flex-col items-center w-full">
+        <el-avatar :size="100" :src="userUrl" class="mb-4 shadow-md" />
+        <h2 class="text-2xl font-bold text-gray-800 mb-1">{{ username }}</h2>
+        <p class="text-gray-500 mb-8">{{ profession || "暂无职位" }}</p>
+
+        <div class="w-full px-8 space-y-4">
+          <div>
+            <label class="text-sm text-gray-500">头像 URL</label>
+            <el-input v-model="userUrl" placeholder="输入图片地址" size="small" />
           </div>
-          <div class="flex items-center mb-6">
-            <h1 class="w-24 font-bold">用户名：</h1>
-            <el-input v-model="username" disabled></el-input>
+          <div>
+            <label class="text-sm text-gray-500">登录账号 (不可修改)</label>
+            <el-input v-model="username" disabled />
           </div>
-          <div class="flex items-center mb-6">
-            <h1 class="w-24 font-bold">电话号码：</h1>
-            <el-input v-model="phone" placeholder="请输入电话号码"></el-input>
-          </div>
-          <div class="flex items-center mb-6">
-            <h1 class="w-24 font-bold">密码：</h1>
-            <h1 class="text-blue-500 cursor-pointer hover:underline" @click="changeBoard = true">
-              修改密码
-            </h1>
-          </div>
-          <div class="flex items-center mb-6">
-            <h1 class="w-24 font-bold">职业：</h1>
-            <el-input v-model="profession" placeholder="请输入职业"></el-input>
+          <div>
+            <label class="text-sm text-gray-500">联系电话</label>
+            <el-input v-model="phone" placeholder="未设置" />
           </div>
 
-          <div class="mt-4">
-            <el-button type="danger" @click="saveProfile" class="w-full">保存资料</el-button>
-          </div>
-          <div class="mt-4">
-            <el-button type="info" @click="handleLogout" class="w-full">退出登录</el-button>
+          <el-button type="primary" class="w-full mt-4" @click="saveProfile">保存修改</el-button>
+
+          <div class="flex justify-between mt-4">
+            <el-button link type="primary" @click="changeBoard = true">修改密码</el-button>
+            <el-button link type="danger" @click="handleLogout">退出登录</el-button>
           </div>
         </div>
       </div>
+    </el-card>
 
-      <div class="w-1/2 h-full bg-gray-50">
-        <div class="w-full h-full flex flex-col justify-center p-10">
-          <div class="w-[80%] m-auto">
-            <h1 class="mb-4 font-bold text-lg">个人简介：</h1>
-            <el-input
-              type="textarea"
-              resize="none"
-              :rows="12"
-              v-model="introduction"
-              placeholder="请输入个人简介..."
-            ></el-input>
-          </div>
+    <el-card class="w-2/3 h-full" shadow="sm">
+      <template #header>
+        <div class="card-header">
+          <span class="font-bold text-lg">个人简介 / About Me</span>
         </div>
-      </div>
+      </template>
+      <el-input
+        type="textarea"
+        resize="none"
+        :rows="20"
+        v-model="introduction"
+        placeholder="在这里写下您的个人简介..."
+        class="text-lg"
+      ></el-input>
+    </el-card>
 
-      <el-dialog title="修改密码" v-model="changeBoard" width="30%">
-        <span>修改密码功能需要后端接口支持，暂未实现。</span>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="changeBoard = false">关 闭</el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
+    <el-dialog title="修改密码" v-model="changeBoard" width="30%">
+      <div class="py-4">
+        <el-alert
+          title="提示"
+          type="info"
+          description="修改密码功能需要后端接口支持，暂未实现。"
+          show-icon
+          :closable="false"
+        />
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="changeBoard = false">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -74,6 +71,7 @@ import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/counter";
 
+const router = useRouter();
 const userStore = useUserStore();
 const { Logout } = userStore;
 
@@ -81,9 +79,6 @@ const handleLogout = () => {
   Logout();
   router.push("/login");
 };
-
-const router = useRouter();
-const size = 80;
 
 const userUrl = ref("");
 const username = ref("");
@@ -98,30 +93,29 @@ onMounted(() => {
   if (!currentUser) {
     ElMessage.error("请先登录");
     router.push("/login");
+  } else {
+    const storageKey = `userProfile_${currentUser}`;
+    const savedProfile = JSON.parse(localStorage.getItem(storageKey));
+
+    if (savedProfile) {
+      userUrl.value = savedProfile.userUrl;
+      username.value = savedProfile.username;
+      phone.value = savedProfile.phone;
+      profession.value = savedProfile.profession;
+      introduction.value = savedProfile.introduction;
+    } else {
+      // 修复：默认显示当前登录的用户名，而不是 admin
+      userUrl.value = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
+      username.value = currentUser;
+      phone.value = "";
+      profession.value = "新用户";
+      introduction.value = "这是我的个人简介。";
+    }
   }
 });
 
-// 读取本地存储的用户资料
-const storageKey = `userProfile_${currentUser}`;
-const savedProfile = JSON.parse(localStorage.getItem(storageKey));
-if (savedProfile) {
-  userUrl.value = savedProfile.userUrl;
-  username.value = savedProfile.username;
-  phone.value = savedProfile.phone;
-  profession.value = savedProfile.profession;
-  introduction.value = savedProfile.introduction;
-} else {
-  userUrl.value = "https://via.placeholder.com/80";
-  username.value = "admin";
-  phone.value = "1234567890";
-  profession.value = "管理员";
-  introduction.value = "这是我的个人简介。";
-}
-
-// 保存个人资料函数
 const saveProfile = () => {
   if (!currentUser) return;
-
   const userProfile = {
     userUrl: userUrl.value,
     username: username.value,
@@ -129,8 +123,7 @@ const saveProfile = () => {
     profession: profession.value,
     introduction: introduction.value,
   };
-
-  localStorage.setItem("userProfile", JSON.stringify(userProfile));
+  localStorage.setItem(`userProfile_${currentUser}`, JSON.stringify(userProfile));
   ElMessage({ message: "个人资料保存成功", type: "success" });
 };
 </script>

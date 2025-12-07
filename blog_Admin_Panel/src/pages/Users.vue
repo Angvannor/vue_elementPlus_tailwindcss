@@ -1,63 +1,80 @@
 <template>
-  <div class="h-full w-full">
-    <div class="w-full h-[10%] flex justify-between">
-      <div class="w-1/6 h-full flex items-center pl-6">
-        <el-input placeholder="搜索名字" v-model="searchName"></el-input>
+  <div class="h-full w-full p-6 bg-gray-50">
+    <div class="bg-white p-4 rounded-lg shadow-sm h-full flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <div class="flex gap-4">
+          <el-input
+            v-model="searchName"
+            placeholder="搜索姓名"
+            prefix-icon="Search"
+            class="w-48"
+            clearable
+          />
+          <el-input
+            v-model="searchPhone"
+            placeholder="搜索电话"
+            prefix-icon="Phone"
+            class="w-48"
+            clearable
+          />
+        </div>
+        <el-button type="success" @click="confirmAdd = true">
+          <el-icon class="mr-1"><UserFilled /></el-icon>添加用户
+        </el-button>
       </div>
-      <div class="w-1/6 h-full flex items-center">
-        <el-input placeholder="搜索电话号码" v-model="searchPhone"></el-input>
-      </div>
-    </div>
-    <div class="w-full pl-10">
-      <el-button type="danger" @click="confirmAdd = true">添加账户</el-button>
-    </div>
-    <el-divider direction="horizontal" content-position="center"></el-divider>
-    <div class="pl-10">
-      <el-table :data="displayAccounts" style="width: 100%">
-        <el-table-column prop="avatar" label="头像" width="180">
+
+      <el-table :data="displayAccounts" style="width: 100%" class="flex-grow" height="100%">
+        <el-table-column prop="avatar" label="头像" width="100" align="center">
           <template #default="{ row }">
-            <el-avatar :src="row.avatar" />
+            <el-avatar :src="row.avatar" shape="square" size="small" />
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="名称" width="360" />
-        <el-table-column prop="phone" label="电话" width="360" />
-        <el-table-column prop="position" label="职位" width="360" />
-        <el-table-column prop="date" label="日期" />
-        <el-table-column label="操作" width="150" fixed="right">
+        <el-table-column prop="name" label="姓名" width="180" sortable />
+        <el-table-column prop="phone" label="电话号码" width="200" />
+        <el-table-column prop="position" label="职位/角色" width="180">
           <template #default="{ row }">
-            <el-button type="danger" size="small" @click="onDelete(row.id)">删除</el-button>
+            <el-tag type="info">{{ row.position }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="date" label="注册日期" sortable />
+        <el-table-column label="操作" width="150" align="center" fixed="right">
+          <template #default="{ row }">
+            <el-button type="danger" size="small" icon="Delete" @click="onDelete(row.id)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
 
-    <div class="w-1/3 h-1/2 rounded-2xl bg-gray-50 m-auto z-10" v-if="confirmAdd">
-      <div class="w-full h-1/6 flex justify-end pr-6 pt-6">
-        <el-button circle @click="confirmAdd = false">X</el-button>
-      </div>
-      <div class="w-full h-5/6 flex flex-col items-center">
-        <div class="w-4/5 h-1/6">
-          <el-input placeholder="用户名" v-model="userName" class="w-full!"></el-input>
-        </div>
-        <div class="w-4/5 h-1/6 mt-4">
-          <el-input placeholder="电话号码" v-model="userPhone" class="w-full!"></el-input>
-        </div>
-        <div class="w-4/5 h-1/6 mt-4">
-          <el-input placeholder="职位" v-model="position" class="w-full!"></el-input>
-        </div>
-        <div class="w-full h-1/3 flex justify-center items-center p-4">
+    <el-dialog title="添加新用户" v-model="confirmAdd" width="30%">
+      <el-form label-width="80px">
+        <el-form-item label="用户名">
+          <el-input v-model="userName" placeholder="请输入姓名" />
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="userPhone" placeholder="请输入电话号码" />
+        </el-form-item>
+        <el-form-item label="职位">
+          <el-input v-model="position" placeholder="例如：编辑、管理员" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="confirmAdd = false">取消</el-button>
           <el-button type="primary" @click="addUser">确认添加</el-button>
-        </div>
-      </div>
-    </div>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { useUserManageStore } from "@/stores/counter";
+import { Search, Phone, UserFilled, Delete } from "@element-plus/icons-vue";
 
 const userManagement = useUserManageStore();
 const { accounts } = storeToRefs(userManagement);
@@ -65,7 +82,7 @@ const { addAccount, deleteAccount, searchAccount } = userManagement;
 
 const confirmAdd = ref(false);
 
-// 搜索字段（与添加字段分离，避免冲突）
+// 搜索字段
 const searchName = ref("");
 const searchPhone = ref("");
 
@@ -76,16 +93,11 @@ const position = ref("");
 
 // 计算显示的账户列表
 const displayAccounts = computed(() => {
-  if (searchName.value === "" && searchPhone.value === "") {
+  if (!searchName.value && !searchPhone.value) {
     return accounts.value;
   }
   return searchAccount(searchName.value, searchPhone.value);
 });
-
-// Search 按钮无需额外逻辑，计算属性会响应输入变化
-const Search = () => {
-  // 留空用于兼容按钮交互
-};
 
 // 添加用户
 const addUser = () => {
@@ -98,16 +110,21 @@ const addUser = () => {
     phone: userPhone.value,
     position: position.value,
   });
+  // 重置表单
   userName.value = "";
   userPhone.value = "";
   position.value = "";
   confirmAdd.value = false;
 };
 
-// 删除用户（带确认）
+// 删除用户
 const onDelete = (id) => {
-  // 简单确认
-  if (!window.confirm("确认删除该用户？")) return;
-  deleteAccount(id);
+  ElMessageBox.confirm("确认删除该用户吗？此操作无法撤销。", "警告", {
+    confirmButtonText: "删除",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(() => {
+    deleteAccount(id);
+  });
 };
 </script>
