@@ -31,18 +31,19 @@ import { ElMessage } from "element-plus";
 
 const router = useRouter();
 const userStore = useUserStore();
+const { RegisterAccount } = userStore;
 
 const username = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 
-const onRegister = () => {
-  const ok = userStore.RegisterAccount({
+const onRegister = async () => {
+  const success = await RegisterAccount({
     username: username.value,
     password: password.value,
     confirmPassword: confirmPassword.value,
   });
-  if (ok) {
+  if (success) {
     ElMessage.success("注册成功，进入管理页面");
     router.push("/admin");
   }

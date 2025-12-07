@@ -5,13 +5,20 @@ import { ElMessage } from "element-plus";
 // 用户信息存储与管理
 export const useUserStore = defineStore("user", () => {
   const users = ref(JSON.parse(localStorage.getItem("users") || "[]"));
+  const currentUser = ref(localStorage.getItem("currentUser") || "");
 
   const RegisterAccount = (data) => {
+    // 校验注册信息
+    if (!data.username || !data.password || !data.confirmPassword) {
+      ElMessage({ message: "请完整填写注册信息", type: "error" });
+      return false;
+    }
     // 修正拼写并校验密码
     if (data.password !== data.confirmPassword) {
       ElMessage({ message: "两次输入的密码不一致", type: "error" });
       return false;
     }
+    // 检查用户名是否已存在
     for (let i = 0; i < users.value.length; i++) {
       if (users.value[i].username === data.username) {
         ElMessage({ message: "用户名已存在", type: "error" });
@@ -25,9 +32,16 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const LoginAccount = (data) => {
+    // 校验登录信息
+    if (!data.username || !data.password) {
+      ElMessage({ message: "请填写用户名和密码", type: "error" });
+      return false;
+    }
+    // 验证用户名和密码
     for (let i = 0; i < users.value.length; i++) {
       if (users.value[i].username === data.username && users.value[i].password === data.password) {
         localStorage.setItem("currentUser", data.username);
+        currentUser.value = data.username;
         ElMessage({ message: "登录成功", type: "success" });
         return true;
       }
@@ -36,7 +50,13 @@ export const useUserStore = defineStore("user", () => {
     return false;
   };
 
-  return { users, RegisterAccount, LoginAccount };
+  const Logout = () => {
+    localStorage.removeItem("currentUser");
+    currentUser.value = "";
+    ElMessage({ message: "已退出登录", type: "success" });
+  };
+
+  return { users, currentUser, RegisterAccount, LoginAccount, Logout };
 });
 
 // 文章和类别存储与管理

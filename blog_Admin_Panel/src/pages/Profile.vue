@@ -35,6 +35,9 @@
           <div class="mt-4">
             <el-button type="danger" @click="saveProfile" class="w-full">保存资料</el-button>
           </div>
+          <div class="mt-4">
+            <el-button type="info" @click="handleLogout" class="w-full">退出登录</el-button>
+          </div>
         </div>
       </div>
 
@@ -69,6 +72,15 @@
 import { ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/counter";
+
+const userStore = useUserStore();
+const { Logout } = userStore;
+
+const handleLogout = () => {
+  Logout();
+  router.push("/login");
+};
 
 const router = useRouter();
 const size = 80;

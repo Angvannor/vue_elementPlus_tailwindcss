@@ -20,8 +20,13 @@ const router = createRouter({
       ],
     },
     {
+      path: "/register",
+      component: () => import("@/pages/Register.vue"),
+    },
+    {
       path: "/admin",
       component: AdminLayout,
+      meta: { requiresAuth: true },
       children: [
         {
           path: "",
@@ -46,10 +51,20 @@ const router = createRouter({
       ],
     },
     {
-      path: "/register",
-      component: () => import("@/pages/Register.vue"),
+      path: "/:pathMatch(.*)*",
+      redirect: "/login",
     },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem("currentUser");
+
+  if (to.path.startsWith("/admin") && !isAuthenticated) {
+    next("/login");
+  } else {
+    next();
+  }
 });
 
 export default router;
