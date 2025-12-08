@@ -8,7 +8,7 @@
         </el-button>
       </div>
 
-      <el-table :data="categories" style="width: 100%" class="flex-grow" height="100%">
+      <el-table :data="categories" style="width: 100%" class="grow" height="100%">
         <el-table-column label="名称" prop="name" width="200">
           <template #default="{ row }">
             <el-tag effect="dark">{{ row.name }}</el-tag>
@@ -60,7 +60,7 @@ import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useCategoryStore } from "@/stores/counter";
 import { ElMessageBox, ElMessage } from "element-plus";
-import { Plus, Delete } from "@element-plus/icons-vue"; // 引入图标
+import { Plus, Delete } from "@element-plus/icons-vue";
 
 const categoryStore = useCategoryStore();
 const { categories } = storeToRefs(categoryStore);
@@ -84,7 +84,6 @@ const handleAdd = () => {
 };
 
 const handleDelete = (name) => {
-  // 注意：这里传的是 name 而不是 id，修复了之前的 bug
   ElMessageBox.confirm(`确定删除类别 "${name}" 吗?`, "警告", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",

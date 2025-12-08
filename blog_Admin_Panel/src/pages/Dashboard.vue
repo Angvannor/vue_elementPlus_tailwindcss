@@ -6,9 +6,11 @@
       <h1 class="text-center text-2xl font-bold leading-tight">
         欢迎使用博客管理系统后台管理界面。
       </h1>
-      <div class="w-[40%] m-auto">
+      <div class="w-[60%] m-auto">
         <span class="text-xl">如果没有登录的话，请先</span>
-        <span @click="jumpToLogin" class="text-xl text-blue-500 cursor-pointer">登录</span>
+        <span @click="jumpToLogin" class="text-xl text-blue-500 cursor-pointer hover:underline"
+          >登录</span
+        >
         <span class="text-xl">。</span>
       </div>
     </div>

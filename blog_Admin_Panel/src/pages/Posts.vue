@@ -1,12 +1,16 @@
 <template>
   <div class="h-full w-full p-6">
     <div class="flex justify-between mb-4">
-      <div class="flex gap-4">
+      <div class="w-[30%] flex gap-4">
         <el-input v-model="searchKeyword" placeholder="搜索文章标题或内容" class="w-64" clearable />
         <el-select v-model="searchCategory" placeholder="全部分类" class="w-32">
           <el-option label="全部" value="全部" />
-          <el-option label="技术" value="技术" />
-          <el-option label="生活" value="生活" />
+          <el-option
+            v-for="category in categories"
+            :key="category.name"
+            :label="category.name"
+            :value="category.name"
+          />
         </el-select>
         <el-button type="primary" @click="handleSearch">搜索</el-button>
       </div>
@@ -43,8 +47,12 @@
         </el-form-item>
         <el-form-item label="分类">
           <el-select v-model="newPost.category" placeholder="请选择分类">
-            <el-option label="技术" value="技术" />
-            <el-option label="生活" value="生活" />
+            <el-option
+              v-for="category in categories"
+              :key="category.name"
+              :label="category.name"
+              :value="category.name"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="状态">
@@ -75,12 +83,16 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useBlogStore } from "@/stores/counter";
+import { useCategoryStore } from "@/stores/counter";
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
 
 const blogStore = useBlogStore();
 const { posts } = storeToRefs(blogStore);
 const { addPost, deletePost } = blogStore;
+
+const categoryStore = useCategoryStore();
+const { categories } = storeToRefs(categoryStore);
 
 // 搜索状态
 const searchKeyword = ref("");

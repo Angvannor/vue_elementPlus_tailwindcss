@@ -1,9 +1,9 @@
 <template>
   <div
-    class="h-screen w-full flex justify-center items-center bg-gradient-to-br from-blue-500 to-cyan-400"
+    class="h-screen w-full flex justify-center items-center bg-linear-to-br from-blue-200 to-cyan-200"
   >
     <div class="w-[400px] bg-white rounded-2xl shadow-2xl overflow-hidden">
-      <div class="h-32 bg-blue-600 flex flex-col justify-center items-center text-white">
+      <div class="h-32 bg-blue-400 flex flex-col justify-center items-center text-white">
         <h1 class="text-3xl font-bold tracking-wider">欢迎回来</h1>
         <p class="text-sm opacity-80 mt-2">请登录您的管理账号</p>
       </div>
@@ -54,7 +54,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/counter";
-import { User, Lock } from "@element-plus/icons-vue"; // 引入图标
+import { User, Lock } from "@element-plus/icons-vue";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -82,10 +82,8 @@ const onLogin = async () => {
 };
 
 const jumpToRegister = () => {
-  router.push("/register"); // 建议路由路径统一小写
+  router.push("/register");
 };
 </script>
 
-<style scoped>
-/* 可以在这里添加一些微动画 */
-</style>
+<style scoped></style>

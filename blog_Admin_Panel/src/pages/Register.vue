@@ -1,9 +1,9 @@
 <template>
   <div
-    class="h-screen w-full flex justify-center items-center bg-gradient-to-bl from-cyan-400 to-blue-500"
+    class="h-screen w-full flex justify-center items-center bg-linear-to-bl from-cyan-200 to-blue-200"
   >
     <div class="w-[400px] bg-white rounded-2xl shadow-2xl overflow-hidden">
-      <div class="h-32 bg-cyan-600 flex flex-col justify-center items-center text-white">
+      <div class="h-32 bg-cyan-400 flex flex-col justify-center items-center text-white">
         <h1 class="text-3xl font-bold tracking-wider">创建账户</h1>
         <p class="text-sm opacity-80 mt-2">注册以加入管理系统</p>
       </div>
@@ -77,7 +77,6 @@ const loading = ref(false);
 const onRegister = async () => {
   loading.value = true;
 
-  // 简单的前端校验（Store里虽然有，但前端防抖体验更好）
   if (password.value !== confirmPassword.value) {
     ElMessage.error("两次输入的密码不一致");
     loading.value = false;
@@ -92,8 +91,6 @@ const onRegister = async () => {
     });
 
     if (success) {
-      // 注册成功后通常建议跳转登录页，或者直接进首页
-      // 这里根据您的逻辑直接进首页
       router.push("/admin");
     }
     loading.value = false;

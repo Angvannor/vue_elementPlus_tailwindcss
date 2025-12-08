@@ -23,7 +23,7 @@
         </el-button>
       </div>
 
-      <el-table :data="displayAccounts" style="width: 100%" class="flex-grow" height="100%">
+      <el-table :data="displayAccounts" style="width: 100%" class="grow" height="100%">
         <el-table-column prop="avatar" label="头像" width="100" align="center">
           <template #default="{ row }">
             <el-avatar :src="row.avatar" shape="square" size="small" />
