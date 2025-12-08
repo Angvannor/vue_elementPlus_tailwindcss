@@ -5,8 +5,11 @@ import { ElMessage } from "element-plus";
 // 用户管理（Users 页面使用的 store）
 export const useUserManageStore = defineStore("userManage", () => {
   const accounts = ref(JSON.parse(localStorage.getItem("accounts") || "[]"));
-
+  // 添加用户
   const addAccount = (user) => {
+    // 检查用户名是否已存在
+    if (accounts.value.some((u) => u.name === user.name)) return;
+    // 添加新用户
     accounts.value.push({
       id: Date.now(),
       name: user.name,
@@ -18,13 +21,24 @@ export const useUserManageStore = defineStore("userManage", () => {
     localStorage.setItem("accounts", JSON.stringify(accounts.value));
     ElMessage({ message: "用户添加成功", type: "success" });
   };
-
+  // 删除用户
   const deleteAccount = (id) => {
     accounts.value = accounts.value.filter((u) => u.id !== id);
     localStorage.setItem("accounts", JSON.stringify(accounts.value));
     ElMessage({ message: "用户删除成功", type: "success" });
   };
-
+  // 更新用户信息
+  const updateAccount = (username, newData) => {
+    const index = accounts.value.findIndex((user) => user.name === username);
+    if (index !== -1) {
+      accounts.value[index] = { ...accounts.value[index], ...newData };
+      localStorage.setItem("accounts", JSON.stringify(accounts.value));
+      ElMessage({ message: "用户信息更新成功", type: "success" });
+    } else {
+      ElMessage({ message: "用户未找到", type: "error" });
+    }
+  };
+  // 搜索用户
   const searchAccount = (name, phone) => {
     return accounts.value.filter(
       (user) =>
@@ -63,7 +77,12 @@ export const useUserStore = defineStore("user", () => {
     localStorage.setItem("users", JSON.stringify(users.value));
 
     const userManageStore = useUserManageStore();
-    userManageStore.addAccount({ name: data.username, phone: "", position: "用户" });
+    userManageStore.addAccount({
+      name: data.username,
+      phone: "",
+      position: "用户",
+      avatar: "https://www.w3schools.com/howto/img_avatar.png",
+    });
 
     ElMessage({ message: "注册成功", type: "success" });
     return true;

@@ -69,11 +69,13 @@
 import { ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/counter";
+import { useUserStore, useUserManageStore } from "@/stores/counter";
 
 const router = useRouter();
 const userStore = useUserStore();
 const { Logout } = userStore;
+
+const userManagement = useUserManageStore();
 
 const handleLogout = () => {
   Logout();
@@ -94,36 +96,42 @@ onMounted(() => {
     ElMessage.error("请先登录");
     router.push("/login");
   } else {
+    username.value = currentUser;
+    // 尝试从本地存储加载用户资料
     const storageKey = `userProfile_${currentUser}`;
     const savedProfile = JSON.parse(localStorage.getItem(storageKey));
-
+    // 获取全局用户账户信息
+    const globalUserAccount = userManagement.accounts.find(
+      (account) => account.name === currentUser
+    );
+    // 如果有保存的资料则加载，否则使用默认值
     if (savedProfile) {
-      userUrl.value = savedProfile.userUrl;
-      username.value = savedProfile.username;
-      phone.value = savedProfile.phone;
-      profession.value = savedProfile.profession;
-      introduction.value = savedProfile.introduction;
+      introduction.value = savedProfile.introduction || "";
+    }
+    if (globalUserAccount) {
+      userUrl.value = globalUserAccount.avatar;
+      phone.value = globalUserAccount.phone;
+      profession.value = globalUserAccount.position;
     } else {
-      // 修复：默认显示当前登录的用户名，而不是 admin
-      userUrl.value = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
-      username.value = currentUser;
+      userUrl.value = "https://via.placeholder.com/100";
       phone.value = "";
-      profession.value = "新用户";
-      introduction.value = "这是我的个人简介。";
+      profession.value = "用户";
     }
   }
 });
 
 const saveProfile = () => {
   if (!currentUser) return;
+  // 保存用户资料到本地存储
   const userProfile = {
-    userUrl: userUrl.value,
-    username: username.value,
-    phone: phone.value,
-    profession: profession.value,
     introduction: introduction.value,
   };
   localStorage.setItem(`userProfile_${currentUser}`, JSON.stringify(userProfile));
+  useUserManageStore.updateAccount(currentUser, {
+    avatar: userUrl.value,
+    phone: phone.value,
+    position: profession.value,
+  });
   ElMessage({ message: "个人资料保存成功", type: "success" });
 };
 </script>

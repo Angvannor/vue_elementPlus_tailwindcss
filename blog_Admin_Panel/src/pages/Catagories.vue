@@ -17,7 +17,7 @@
         <el-table-column label="简介" prop="description" show-overflow-tooltip></el-table-column>
         <el-table-column label="关联文章数" prop="count" width="120" align="center">
           <template #default="{ row }">
-            <el-badge :value="row.count" class="item" type="primary" />
+            <el-badge :value="getPostCount(row.name)" class="item" type="primary" />
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150" align="center">
@@ -58,13 +58,19 @@
 <script setup>
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
-import { useCategoryStore } from "@/stores/counter";
+import { useCategoryStore, useBlogStore } from "@/stores/counter";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { Plus, Delete } from "@element-plus/icons-vue";
 
 const categoryStore = useCategoryStore();
 const { categories } = storeToRefs(categoryStore);
 const { addCategory, deleteCategory } = categoryStore;
+
+const blogStore = useBlogStore();
+const { posts } = storeToRefs(blogStore);
+const getPostCount = (categoryName) => {
+  return posts.value.filter((post) => post.category === categoryName).length;
+};
 
 const categoryName = ref("");
 const categoryDescription = ref("");
