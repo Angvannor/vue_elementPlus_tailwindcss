@@ -37,8 +37,8 @@ const router = createRouter({
           component: () => import("@/pages/Posts.vue"),
         },
         {
-          path: "catagories",
-          component: () => import("@/pages/Catagories.vue"),
+          path: "categories",
+          component: () => import("@/pages/Categories.vue"),
         },
         {
           path: "users",
